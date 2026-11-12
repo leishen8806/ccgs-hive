@@ -18,7 +18,7 @@
   <main class="shell">
     <header class="topbar">
       <div><p class="eyebrow">CCGS HIVE · UI KIT / STAGE 02</p><h1 class="title">按钮纵切片</h1><p class="subtitle">同一套交互契约，跨 Web admin、H5 与 App 复用。</p></div>
-      <div class="top-actions"><span class="chip">W-BTN-01</span><span class="chip">H-BTN-01</span><span class="chip">A-BTN-01</span><button class="icon-btn" id="themeToggle" type="button" aria-label="切换深色模式">☾ 深色</button></div>
+      <div class="top-actions"><span class="chip">W-BTN-01</span><span class="chip">H-BTN-01</span><span class="chip">A-BTN-01</span><button class="icon-btn" id="themeToggle" type="button" aria-label="切换深色模式">深色模式</button></div>
     </header>
     <nav class="tabs wide-tabs" aria-label="平台切换"><button class="tab active" data-platform="web" type="button">Web admin</button><button class="tab" data-platform="h5" type="button">H5</button><button class="tab" data-platform="app" type="button">App</button></nav>
     <div id="appSubtabs" class="subtabs wide-tabs" hidden><button class="subtab active" data-app="rn" type="button">React Native</button><button class="subtab" data-app="flutter" type="button">Flutter</button></div>
@@ -55,7 +55,7 @@
     document.querySelectorAll('[data-app]').forEach(b=>b.addEventListener('click',()=>{app=b.dataset.app;document.querySelectorAll('[data-app]').forEach(x=>x.classList.toggle('active',x===b));render()}));
     document.querySelectorAll('[data-state]').forEach(b=>b.addEventListener('click',()=>{state=b.dataset.state;render()}));
     [$('#primaryButton'),$('#secondaryButton')].forEach(b=>b.addEventListener('click',()=>{if(!b.disabled){$('#notice').textContent='已触发本地演示事件 · 未调用接口';$('#notice').classList.add('show');setTimeout(()=>$('#notice').classList.remove('show'),1800)}}));
-    $('#themeToggle').addEventListener('click',()=>{document.documentElement.classList.toggle('dark');$('#themeToggle').textContent=document.documentElement.classList.contains('dark')?'☀ 浅色':'☾ 深色'}); render();
+    $('#themeToggle').addEventListener('click',()=>{document.documentElement.classList.toggle('dark');$('#themeToggle').textContent=document.documentElement.classList.contains('dark')?'浅色模式':'深色模式'}); render();
   </script>
 </body>
 </html>
