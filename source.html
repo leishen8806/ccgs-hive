@@ -1,0 +1,345 @@
+<style>
+#ccgs-hive-flow{--hf-bg:#10191e;--hf-panel:#17252d;--hf-raised:#23363e;--hf-ink:#f1eee6;--hf-muted:#b3c2c6;--hf-line:#3a515b;--hf-gold:#e6bf7b;--hf-blue:#94cce2;--hf-gold-soft:#3d3427;--hf-blue-soft:#203c49;--hf-scroll:#6a828b;background:var(--hf-bg);color:var(--hf-ink);font:14px/1.6 "Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;border-radius:14px;overflow:clip;color-scheme:dark}
+#ccgs-hive-flow *{box-sizing:border-box;scrollbar-color:var(--hf-scroll) var(--hf-bg);scrollbar-width:thin}
+#ccgs-hive-flow [hidden]{display:none!important}
+#ccgs-hive-flow h1,#ccgs-hive-flow h2,#ccgs-hive-flow h3,#ccgs-hive-flow p{margin:0}
+#ccgs-hive-flow button,#ccgs-hive-flow select,#ccgs-hive-flow input{font:inherit;color:inherit}
+#ccgs-hive-flow button{min-height:44px}
+#ccgs-hive-flow button:disabled{opacity:.4}
+#ccgs-hive-flow :focus-visible{outline:3px solid var(--hf-blue);outline-offset:3px}
+#ccgs-hive-flow a{color:var(--hf-gold);text-underline-offset:3px;overflow-wrap:anywhere}
+#ccgs-hive-flow ::-webkit-scrollbar{width:10px;height:10px}
+#ccgs-hive-flow ::-webkit-scrollbar-track{background:var(--hf-bg)}
+#ccgs-hive-flow ::-webkit-scrollbar-thumb{background:var(--hf-scroll);border:2px solid var(--hf-bg);border-radius:6px}
+#ccgs-hive-flow ::-webkit-scrollbar-thumb:hover{background:var(--hf-muted)}
+#ccgs-hive-flow ::-webkit-scrollbar-thumb:active{background:var(--hf-gold)}
+#ccgs-hive-flow .hf-header{padding:20px 25px;display:flex;align-items:center;justify-content:space-between;gap:15px;border-bottom:1px solid var(--hf-line);flex-wrap:wrap}
+#ccgs-hive-flow .hf-brand{display:flex;align-items:center;gap:16px}
+#ccgs-hive-flow .hf-wordmark{font:600 24px/1.2 "Bahnschrift","Segoe UI",sans-serif;letter-spacing:.1em}
+#ccgs-hive-flow .hf-title{border-left:1px solid var(--hf-line);padding-left:16px}
+#ccgs-hive-flow h1{font-size:18px;font-weight:500;line-height:1.4}
+#ccgs-hive-flow .hf-eyebrow{font-size:11px;letter-spacing:.08em;color:var(--hf-muted);margin-top:3px}
+#ccgs-hive-flow .hf-demo{font-size:12px;color:var(--hf-gold);display:flex;align-items:center;gap:8px}
+#ccgs-hive-flow .hf-demo::before{content:"";width:7px;height:7px;border:1px solid currentColor;border-radius:50%}
+#ccgs-hive-flow .hf-toolbar{padding:15px 25px;display:flex;align-items:center;gap:7px;flex-wrap:wrap;border-bottom:1px solid var(--hf-line)}
+#ccgs-hive-flow .hf-btn{min-width:44px;padding:8px 12px;background:var(--hf-panel);border:1px solid var(--hf-line);border-radius:6px;font-size:12px;display:inline-flex;align-items:center;justify-content:center;gap:6px}
+#ccgs-hive-flow .hf-btn:hover{background:var(--hf-raised)}
+#ccgs-hive-flow .hf-btn:active{transform:translateY(1px)}
+#ccgs-hive-flow .hf-btn.hf-primary{min-width:105px;background:var(--hf-gold);color:var(--hf-bg);border-color:var(--hf-gold)}
+#ccgs-hive-flow .hf-speed{display:flex;align-items:center;gap:7px;margin-left:4px;color:var(--hf-muted);font-size:12px}
+#ccgs-hive-flow select{min-height:44px;background:var(--hf-panel);border:1px solid var(--hf-line);border-radius:6px;padding:8px 10px;max-width:100%}
+#ccgs-hive-flow .hf-reduced{display:flex;align-items:center;gap:7px;min-height:44px;margin-left:auto;font-size:12px;color:var(--hf-muted)}
+#ccgs-hive-flow .hf-reduced input{accent-color:var(--hf-gold);width:16px;height:16px}
+#ccgs-hive-flow .hf-main{display:grid;grid-template-columns:minmax(0,1fr) 250px;gap:20px;padding:20px 22px 22px;align-items:start}
+#ccgs-hive-flow .hf-map-column{min-width:0}
+#ccgs-hive-flow .hf-map-top{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px}
+#ccgs-hive-flow h2{font-size:15px;font-weight:500}
+#ccgs-hive-flow .hf-caption{font-size:11px;color:var(--hf-muted)}
+#ccgs-hive-flow .hf-map{position:relative;isolation:isolate;border:1px solid var(--hf-line);background-color:var(--hf-panel);background-image:radial-gradient(var(--hf-line) .65px,transparent .65px);background-size:24px 24px;border-radius:9px;overflow:clip;min-height:340px}
+#ccgs-hive-flow .hf-canvas,#ccgs-hive-flow .hf-grid-svg{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
+#ccgs-hive-flow .hf-grid-svg{z-index:0}
+#ccgs-hive-flow .hf-canvas{z-index:2}
+#ccgs-hive-flow .hf-cell{position:absolute;border:0;padding:2px;background:transparent;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;min-width:44px;min-height:44px;z-index:1;border-radius:5px}
+#ccgs-hive-flow .hf-cell:hover{background:rgba(148,204,226,.1)}
+#ccgs-hive-flow .hf-cell b{font-size:12px;line-height:1.5;font-weight:500}
+#ccgs-hive-flow .hf-cell small{font-size:11px;line-height:1.4;color:var(--hf-muted)}
+#ccgs-hive-flow .hf-cell[data-center=true] b{font-size:17px;color:var(--hf-gold)}
+#ccgs-hive-flow .hf-cell[data-center=true] small{color:var(--hf-gold);font-variant-numeric:tabular-nums}
+#ccgs-hive-flow .hf-cell[aria-pressed=true]{outline:1px solid var(--hf-blue);outline-offset:2px}
+#ccgs-hive-flow .hf-bee{position:absolute;z-index:4;width:48px;height:56px;padding:0;border:0;border-radius:8px;background:transparent;display:flex;align-items:center;justify-content:center}
+#ccgs-hive-flow .hf-bee:hover,#ccgs-hive-flow .hf-bee[aria-pressed=true]{background:rgba(148,204,226,.15)}
+#ccgs-hive-flow .hf-bee canvas{width:48px;height:48px;display:block;pointer-events:none}
+#ccgs-hive-flow .hf-bee span{position:absolute;bottom:-5px;padding:0 3px;border-radius:2px;background:var(--hf-bg);font:11px/1.3 Consolas,monospace;color:var(--hf-ink);pointer-events:none}
+#ccgs-hive-flow .hf-cell[data-collecting=true] b,#ccgs-hive-flow .hf-cell[data-collecting=true] small{transform:translateY(var(--hf-label-offset))}
+#ccgs-hive-flow .hf-map[data-compact=true] .hf-bee{width:44px;height:44px}
+#ccgs-hive-flow .hf-map[data-compact=true] .hf-bee canvas{width:32px;height:32px}
+#ccgs-hive-flow .hf-map[data-compact=true] .hf-bee span,#ccgs-hive-flow .hf-map[data-compact=true] .hf-cell small{display:none}
+#ccgs-hive-flow .hf-map[data-compact=true] .hf-cell[data-center=true] small{display:block}
+#ccgs-hive-flow .hf-canvas-caption{position:absolute;left:15px;top:12px;z-index:1;color:var(--hf-muted);font-size:11px;pointer-events:none}
+#ccgs-hive-flow .hf-legend{display:flex;align-items:center;gap:15px;flex-wrap:wrap;margin-top:12px;font-size:11px;color:var(--hf-muted)}
+#ccgs-hive-flow .hf-legend span{display:flex;align-items:center;gap:6px}
+#ccgs-hive-flow .hf-swatch{display:inline-block;width:15px;height:2px;background:var(--hf-blue)}
+#ccgs-hive-flow .hf-swatch.hf-gold{background:var(--hf-gold)}
+#ccgs-hive-flow .hf-swatch.hf-dim{background:var(--hf-line)}
+#ccgs-hive-flow .hf-seek-head{display:flex;justify-content:space-between;gap:15px;font-size:12px;margin-top:16px}
+#ccgs-hive-flow .hf-seek-head output{color:var(--hf-gold);font-variant-numeric:tabular-nums}
+#ccgs-hive-flow .hf-seek{width:100%;min-height:44px;margin:0;accent-color:var(--hf-gold);display:block}
+#ccgs-hive-flow .hf-statusline{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;font-size:11px;color:var(--hf-muted)}
+#ccgs-hive-flow .hf-sidebar{border:1px solid var(--hf-line);border-radius:8px;background:var(--hf-panel);padding:18px;min-width:0}
+#ccgs-hive-flow .hf-inspector-label{display:flex;align-items:center;justify-content:space-between;gap:8px;color:var(--hf-muted);font-size:11px;margin-bottom:12px}
+#ccgs-hive-flow .hf-tag{display:inline-block;padding:3px 7px;border-radius:4px;background:var(--hf-blue-soft);color:var(--hf-blue);font-size:11px;line-height:1.5}
+#ccgs-hive-flow .hf-tag.hf-gold-tag{background:var(--hf-gold-soft);color:var(--hf-gold)}
+#ccgs-hive-flow h3{font-size:20px;font-weight:500;line-height:1.5}
+#ccgs-hive-flow .hf-code{font:11px/1.7 Consolas,"Cascadia Code",monospace;overflow-wrap:anywhere;color:var(--hf-muted)}
+#ccgs-hive-flow .hf-description{font-size:13px;line-height:1.85;color:var(--hf-muted);margin-top:12px}
+#ccgs-hive-flow .hf-kv{margin:16px 0;font-size:12px}
+#ccgs-hive-flow .hf-kv>div{display:grid;grid-template-columns:62px minmax(0,1fr);gap:9px;padding:9px 0;border-bottom:1px solid var(--hf-line)}
+#ccgs-hive-flow dt{color:var(--hf-muted)}
+#ccgs-hive-flow dd{margin:0;overflow-wrap:anywhere}
+#ccgs-hive-flow .hf-check-note{font-size:12px;line-height:1.8;color:var(--hf-gold);padding:12px 0}
+#ccgs-hive-flow details summary{display:flex;align-items:center;gap:8px;min-height:44px;font-size:12px;color:var(--hf-blue)}
+#ccgs-hive-flow details summary::before{content:"＋"}
+#ccgs-hive-flow details[open] summary::before{content:"−"}
+#ccgs-hive-flow pre{font:11px/1.65 Consolas,monospace;white-space:pre-wrap;overflow-wrap:anywhere;margin:0;padding:12px;background:var(--hf-bg);border-radius:5px;color:var(--hf-muted)}
+#ccgs-hive-flow .hf-source-link{font-size:12px;display:flex;align-items:center;min-height:44px;margin-top:8px}
+#ccgs-hive-flow .hf-receipts{border-top:1px solid var(--hf-line);margin-top:16px;padding-top:14px}
+#ccgs-hive-flow .hf-receipt-head{display:flex;justify-content:space-between;gap:10px;font-size:12px;margin-bottom:8px}
+#ccgs-hive-flow .hf-receipt-head span{color:var(--hf-gold)}
+#ccgs-hive-flow .hf-empty{font-size:12px;line-height:1.85;color:var(--hf-muted);padding:8px 0}
+#ccgs-hive-flow .hf-receipt{display:flex;align-items:center;justify-content:space-between;gap:8px;text-align:left;width:100%;padding:8px 0;border:0;border-bottom:1px solid var(--hf-line);background:transparent;font-size:11px}
+#ccgs-hive-flow .hf-receipt:hover{background:var(--hf-raised)}
+#ccgs-hive-flow .hf-receipt small{color:var(--hf-gold);font-size:11px}
+#ccgs-hive-flow .hf-workbar{padding:0 22px 21px}
+#ccgs-hive-flow .hf-work-title{display:flex;justify-content:space-between;gap:10px;margin-bottom:10px;align-items:center}
+#ccgs-hive-flow .hf-workers{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:7px}
+#ccgs-hive-flow .hf-worker{display:flex;align-items:center;gap:10px;text-align:left;min-width:0;border:1px solid var(--hf-line);border-radius:6px;padding:10px;background:var(--hf-panel)}
+#ccgs-hive-flow .hf-worker:hover{background:var(--hf-raised)}
+#ccgs-hive-flow .hf-worker[aria-pressed=true]{border-color:var(--hf-blue)}
+#ccgs-hive-flow .hf-worker-code{font:11px/1.3 Consolas,monospace;color:var(--hf-blue)}
+#ccgs-hive-flow .hf-worker b{display:block;font-size:12px;font-weight:500}
+#ccgs-hive-flow .hf-worker small{font-size:11px;color:var(--hf-muted);display:block}
+#ccgs-hive-flow .hf-roster{border-top:1px solid var(--hf-line);padding:20px 22px 24px}
+#ccgs-hive-flow .hf-roster-top{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:13px;flex-wrap:wrap}
+#ccgs-hive-flow .hf-roster-grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:6px}
+#ccgs-hive-flow .hf-roster-node{min-width:0;padding:9px 8px;display:flex;flex-direction:column;gap:5px;text-align:left;border:1px solid var(--hf-line);background:var(--hf-panel);border-radius:5px;min-height:64px}
+#ccgs-hive-flow .hf-roster-node:hover{background:var(--hf-raised)}
+#ccgs-hive-flow .hf-roster-node[aria-pressed=true]{border-color:var(--hf-blue);background:var(--hf-blue-soft)}
+#ccgs-hive-flow .hf-roster-node[data-demo=true]{border-bottom-color:var(--hf-gold)}
+#ccgs-hive-flow .hf-roster-node small{font:11px/1.3 Consolas,monospace;color:var(--hf-muted)}
+#ccgs-hive-flow .hf-roster-node b{font-size:12px;font-weight:500;overflow-wrap:anywhere}
+#ccgs-hive-flow .hf-footer{padding:13px 22px;border-top:1px solid var(--hf-line);display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;color:var(--hf-muted);font-size:11px}
+#ccgs-hive-flow .hf-sr{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+@media(max-width:900px){#ccgs-hive-flow .hf-main{grid-template-columns:minmax(0,1fr)}#ccgs-hive-flow .hf-sidebar{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:20px}#ccgs-hive-flow .hf-receipts{border-top:0;border-left:1px solid var(--hf-line);margin-top:0;padding:0 0 0 20px}#ccgs-hive-flow .hf-workers{grid-template-columns:repeat(4,minmax(0,1fr))}#ccgs-hive-flow .hf-roster-grid{grid-template-columns:repeat(5,minmax(0,1fr))}}
+@media(max-width:560px){#ccgs-hive-flow .hf-header{padding:16px;gap:10px}#ccgs-hive-flow .hf-toolbar{padding:12px 16px}#ccgs-hive-flow .hf-main{padding:16px 13px;gap:16px}#ccgs-hive-flow .hf-sidebar{display:block;padding:16px}#ccgs-hive-flow .hf-receipts{border-left:0;border-top:1px solid var(--hf-line);padding:14px 0 0;margin-top:15px}#ccgs-hive-flow .hf-reduced{margin-left:0}#ccgs-hive-flow .hf-cell b{font-size:11px}#ccgs-hive-flow .hf-cell small{font-size:11px}#ccgs-hive-flow .hf-cell[data-center=true] b{font-size:13px}#ccgs-hive-flow .hf-cell{gap:2px}#ccgs-hive-flow .hf-workers{grid-template-columns:repeat(2,minmax(0,1fr))}#ccgs-hive-flow .hf-workbar,#ccgs-hive-flow .hf-roster{padding:0 13px 20px}#ccgs-hive-flow .hf-roster{padding-top:18px}#ccgs-hive-flow .hf-roster-grid{grid-template-columns:repeat(4,minmax(0,1fr))}#ccgs-hive-flow .hf-work-title{align-items:start;flex-direction:column;gap:3px}#ccgs-hive-flow .hf-roster-top{gap:4px}#ccgs-hive-flow .hf-map-top{gap:8px}#ccgs-hive-flow .hf-map-top h2{font-size:14px}#ccgs-hive-flow .hf-footer{padding:13px 16px}#ccgs-hive-flow #hf-speed{font-size:16px}#ccgs-hive-flow .hf-demo{font-size:11px}#ccgs-hive-flow .hf-wordmark{font-size:22px}#ccgs-hive-flow .hf-title{padding-left:12px}#ccgs-hive-flow .hf-brand{gap:12px}}
+@media(max-width:360px){#ccgs-hive-flow .hf-demo{width:100%}#ccgs-hive-flow .hf-roster-grid{grid-template-columns:repeat(3,minmax(0,1fr))}#ccgs-hive-flow .hf-cell small{display:none}#ccgs-hive-flow .hf-cell[data-center=true] small{display:block}#ccgs-hive-flow .hf-map-top{align-items:start;flex-direction:column;gap:2px}}
+@media(prefers-reduced-motion:reduce){#ccgs-hive-flow *{animation:none!important;transition:none!important}}
+@media(forced-colors:active){#ccgs-hive-flow *{scrollbar-color:auto}}
+</style>
+<div id="ccgs-hive-flow">
+  <header class="hf-header"><div class="hf-brand"><span class="hf-wordmark">CCGS</span><div class="hf-title"><h1>蜂巢分工集群</h1><p class="hf-eyebrow">HIVE OPERATIONS / 49 个岗位</p></div></div><span class="hf-demo">演示模式 · 未连接真实运行</span></header>
+  <div class="hf-toolbar" aria-label="蜂群演示控制">
+    <button id="hf-play" class="hf-btn hf-primary cursor-interaction" type="button">暂停演示</button><button id="hf-restart" class="hf-btn cursor-interaction" type="button">从头播放</button><button id="hf-next" class="hf-btn cursor-interaction" type="button">下一阶段</button>
+    <label class="hf-speed" for="hf-speed">回放速度<select id="hf-speed"><option value=".5">0.5×</option><option value="1" selected>1×</option><option value="2">2×</option></select></label>
+    <label class="hf-reduced cursor-interaction"><input id="hf-reduced" type="checkbox">减少动态效果</label>
+  </div>
+  <main class="hf-main">
+    <section class="hf-map-column" aria-label="多 Agent 蜂群采集与回巢">
+      <div class="hf-map-top"><h2>多源采集 → 蜂蜜数据包 → 中心归集</h2><span class="hf-caption">8 只示例工蜂</span></div>
+      <div class="hf-map" id="hf-map">
+        <svg class="hf-grid-svg" id="hf-grid" role="img" aria-label="18 个演示资料源与中心归集仓的蜂巢布局"></svg>
+        <canvas id="hf-trails" class="hf-canvas" aria-hidden="true"></canvas>
+        <span class="hf-canvas-caption">示例资料源 / 18</span>
+        <div id="hf-source-buttons"></div><div id="hf-bees"></div>
+      </div>
+      <div class="hf-legend"><span><i class="hf-swatch"></i>前往 / 采集中</span><span><i class="hf-swatch hf-gold"></i>携带数据返回</span><span><i class="hf-swatch hf-dim"></i>未参与本次演示</span></div>
+      <div class="hf-seek-head"><label for="hf-seek">演示进度</label><output id="hf-percent">0%</output></div><input id="hf-seek" class="hf-seek cursor-interaction" type="range" min="0" max="200" step="1" value="0" aria-valuetext="0%">
+      <div class="hf-statusline"><span id="hf-play-status">演示播放中</span><span id="hf-counts">已归集 0 包 · 待核验 0 包</span></div>
+    </section>
+    <aside class="hf-sidebar" aria-label="选中工蜂或数据源">
+      <div id="hf-inspector"></div>
+      <section class="hf-receipts"><div class="hf-receipt-head"><strong style="font-weight:500">中心归集记录</strong><span id="hf-receipt-count">0 / 8</span></div><div id="hf-receipt-list"></div></section>
+    </aside>
+  </main>
+  <section class="hf-workbar" aria-label="八个演示工蜂"><div class="hf-work-title"><h2>本次参与的 8 个岗位</h2><span class="hf-caption">点击工蜂或岗位，暂停并查看详情</span></div><div id="hf-workers" class="hf-workers"></div></section>
+  <section class="hf-roster" aria-label="49 个 CCGS 岗位的完整目录"><div class="hf-roster-top"><h2>蜂群岗位目录 · 49 / 49</h2><span class="hf-caption">领导 3 · 主管 8 · 通用 23 · 引擎 15</span></div><div id="hf-roster" class="hf-roster-grid"></div></section>
+  <footer class="hf-footer"><span>CCGS v1.2.0 · 05ad7c8a · 岗位定义已核对</span><span>机械蜂 = 岗位 · 蜂室 = 资料源 · 归集完成后仍待核验</span></footer>
+  <div id="hf-announcement" class="hf-sr" role="status" aria-live="polite"></div>
+  <script id="hf-roster-data" type="application/json">[{"id":"creative-director","name":"创意总监","group":"leadership","engine":null,"summary":"负责整体创意方向、核心支柱冲突与重大创意决策，统一项目基调。"},{"id":"technical-director","name":"技术总监","group":"leadership","engine":null,"summary":"负责架构决策、技术栈选择与性能策略，形成一致的技术愿景。"},{"id":"producer","name":"制作人","group":"leadership","engine":null,"summary":"负责迭代计划、里程碑跟踪、风险管理与跨领域生产协调。"},{"id":"game-designer","name":"游戏设计主管","group":"department","engine":null,"summary":"负责游戏机制、系统、成长、经济与平衡设计，梳理核心玩法。"},{"id":"lead-programmer","name":"主程序","group":"department","engine":null,"summary":"负责系统与接口设计、代码审查和重构，维护代码架构的一致性。"},{"id":"art-director","name":"美术总监","group":"department","engine":null,"summary":"负责视觉风格指南、美术设定集、资产规范及 UI／UX 方向。"},{"id":"audio-director","name":"音频总监","group":"department","engine":null,"summary":"负责音乐方向、音色体系与音频实现策略，统一声音表达。"},{"id":"narrative-director","name":"叙事总监","group":"department","engine":null,"summary":"负责故事线、世界观、角色设计与对白策略，建立叙事方向。"},{"id":"qa-lead","name":"QA 主管","group":"department","engine":null,"summary":"负责测试策略、缺陷分诊、回归计划与发布就绪评估。"},{"id":"release-manager","name":"发布经理","group":"department","engine":null,"summary":"负责构建管理、版本与变更记录，组织部署和回滚流程。"},{"id":"localization-lead","name":"本地化主管","group":"department","engine":null,"summary":"负责文本外置、翻译流水线及语言区域测试，支持国际化。"},{"id":"systems-designer","name":"系统设计师","group":"general","engine":null,"summary":"负责具体游戏机制、公式与玩法循环的设计和实现细化。"},{"id":"level-designer","name":"关卡设计师","group":"general","engine":null,"summary":"负责关卡布局、节奏、遭遇设计与流程，组织玩家推进体验。"},{"id":"economy-designer","name":"经济系统设计师","group":"general","engine":null,"summary":"负责资源经济、掉落表与成长曲线设计，支持经济系统平衡。"},{"id":"gameplay-programmer","name":"玩法程序员","group":"general","engine":null,"summary":"负责功能和玩法系统的代码实现，落地具体游戏交互机制。"},{"id":"engine-programmer","name":"引擎程序员","group":"general","engine":null,"summary":"负责核心引擎、渲染、物理与内存管理等底层系统开发。"},{"id":"ai-programmer","name":"游戏 AI 程序员","group":"general","engine":null,"summary":"负责行为树、寻路、NPC 逻辑与状态机等游戏 AI 系统。"},{"id":"network-programmer","name":"网络程序员","group":"general","engine":null,"summary":"负责网络代码、状态同步、延迟补偿与匹配系统等联机能力。"},{"id":"tools-programmer","name":"工具程序员","group":"general","engine":null,"summary":"负责编辑器扩展、资源流水线工具及调试辅助工具开发。"},{"id":"ui-programmer","name":"UI 程序员","group":"general","engine":null,"summary":"负责 UI 框架、界面、控件与数据绑定，落地界面交互。"},{"id":"technical-artist","name":"技术美术","group":"general","engine":null,"summary":"负责着色器、视觉特效、优化与美术流水线工具等技术美术。"},{"id":"sound-designer","name":"音效设计师","group":"general","engine":null,"summary":"负责音效设计文档、音频事件清单与混音说明，细化声音方案。"},{"id":"writer","name":"编剧","group":"general","engine":null,"summary":"负责对白、背景设定条目及物品描述等具体游戏文本创作。"},{"id":"world-builder","name":"世界观设计师","group":"general","engine":null,"summary":"负责世界规则、阵营、历史和地理设计，构建一致的世界观。"},{"id":"qa-tester","name":"QA 测试员","group":"general","engine":null,"summary":"负责编写测试用例、缺陷报告与测试检查清单，开展测试执行。"},{"id":"performance-analyst","name":"性能分析师","group":"general","engine":null,"summary":"负责性能剖析、内存分析与优化建议，识别运行性能问题。"},{"id":"devops-engineer","name":"DevOps 工程师","group":"general","engine":null,"summary":"负责持续集成、持续交付、构建脚本与版本控制工作流。"},{"id":"analytics-engineer","name":"数据分析工程师","group":"general","engine":null,"summary":"负责事件追踪、数据仪表板与 A/B 测试设计，支持遥测分析。"},{"id":"ux-designer","name":"UX 设计师","group":"general","engine":null,"summary":"负责用户流程、线框图、无障碍与输入处理等体验设计。"},{"id":"prototyper","name":"原型开发师","group":"general","engine":null,"summary":"负责快速试验性原型、机制测试与可行性验证，支持早期探索。"},{"id":"security-engineer","name":"安全工程师","group":"general","engine":null,"summary":"负责反作弊、漏洞利用防范、存档加密与网络安全设计。"},{"id":"accessibility-specialist","name":"无障碍专家","group":"general","engine":null,"summary":"负责无障碍规范、色觉辅助模式、操作重映射与文字缩放。"},{"id":"live-ops-designer","name":"长线运营设计师","group":"general","engine":null,"summary":"负责赛季、活动、战令、留存与线上经济等持续运营设计。"},{"id":"community-manager","name":"社区经理","group":"general","engine":null,"summary":"负责更新说明、玩家反馈、危机沟通与社区健康管理。"},{"id":"unreal-specialist","name":"Unreal 引擎专家","group":"engine","engine":"Unreal","summary":"负责蓝图与 C++ 选型、GAS 概览、引擎子系统及 Unreal 优化。"},{"id":"ue-gas-specialist","name":"UE GAS 专家","group":"engine","engine":"Unreal","summary":"负责技能、效果、属性集合、标签及预测等 GAS 系统设计。"},{"id":"ue-blueprint-specialist","name":"UE 蓝图专家","group":"engine","engine":"Unreal","summary":"负责蓝图与 C++ 边界、图表规范、命名和蓝图优化。"},{"id":"ue-replication-specialist","name":"UE 网络同步专家","group":"engine","engine":"Unreal","summary":"负责属性复制、RPC、预测、相关性与带宽等网络同步问题。"},{"id":"ue-umg-specialist","name":"UE 界面专家","group":"engine","engine":"Unreal","summary":"负责 UMG 控件层级、数据绑定、CommonUI 输入及界面性能。"},{"id":"unity-specialist","name":"Unity 引擎专家","group":"engine","engine":"Unity","summary":"负责传统组件与 DOTS 选型、资源管理及 Unity 渲染管线优化。"},{"id":"unity-dots-specialist","name":"Unity DOTS 专家","group":"engine","engine":"Unity","summary":"负责实体组件系统、Jobs、Burst 编译及混合渲染器应用。"},{"id":"unity-shader-specialist","name":"Unity 着色器专家","group":"engine","engine":"Unity","summary":"负责着色器图、特效图、渲染管线定制与后处理效果。"},{"id":"unity-addressables-specialist","name":"Unity 资源管理专家","group":"engine","engine":"Unity","summary":"负责可寻址资源分组、异步加载、内存及内容交付管理。"},{"id":"unity-ui-specialist","name":"Unity UI 专家","group":"engine","engine":"Unity","summary":"负责 UI Toolkit、UGUI、数据绑定与跨平台界面输入。"},{"id":"godot-specialist","name":"Godot 引擎专家","group":"engine","engine":"Godot","summary":"负责 GDScript 模式、节点与场景架构、信号及 Godot 优化。"},{"id":"godot-gdscript-specialist","name":"Godot GDScript 专家","group":"engine","engine":"Godot","summary":"负责静态类型、设计模式、信号、协程及 GDScript 性能优化。"},{"id":"godot-csharp-specialist","name":"Godot C# 专家","group":"engine","engine":"Godot","summary":"负责 .NET 模式、信号、异步、可空类型及类型安全节点访问。"},{"id":"godot-shader-specialist","name":"Godot 着色器专家","group":"engine","engine":"Godot","summary":"负责 Godot 着色语言、可视化着色器、粒子与后处理。"},{"id":"godot-gdextension-specialist","name":"Godot 原生扩展专家","group":"engine","engine":"Godot","summary":"负责 C++／Rust 绑定、原生性能、自定义节点与构建系统。"}]</script>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/d3@7.9.0/dist/d3.min.js"></script>
+<script>
+(()=>{
+  const root=document.getElementById('ccgs-hive-flow'),q=s=>root.querySelector(s),qa=s=>[...root.querySelectorAll(s)];
+  const agents=JSON.parse(q('#hf-roster-data').textContent),byId=Object.fromEntries(agents.map((a,i)=>[a.id,{...a,code:'A'+String(i+1).padStart(2,'0')}]));
+  const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  const groupNames={leadership:'领导层',department:'部门主管',general:'通用专家',engine:'引擎专家'};
+  const sources=[
+    {id:'requirements',name:'需求文档',short:'需求',q:0,r:-2},{id:'locales',name:'本地化文本',short:'本地化',q:1,r:-2},{id:'code',name:'代码仓库',short:'代码',q:2,r:-2},
+    {id:'narrative',name:'世界观资料',short:'叙事',q:-1,r:-1},{id:'api',name:'接口资料',short:'接口',q:0,r:-1},{id:'build',name:'构建记录',short:'构建',q:1,r:-1},{id:'events',name:'事件埋点',short:'埋点',q:2,r:-1},
+    {id:'design',name:'设计素材',short:'设计',q:-2,r:0},{id:'performance',name:'性能日志',short:'性能',q:-1,r:0},{id:'center',name:'中心归集仓',short:'中心仓',q:0,r:0},{id:'security',name:'安全报告',short:'安全',q:1,r:0},{id:'tests',name:'测试证据',short:'测试',q:2,r:0},
+    {id:'assets',name:'资源目录',short:'资源',q:-2,r:1},{id:'network',name:'网络资料',short:'网络',q:-1,r:1},{id:'levels',name:'关卡资料',short:'关卡',q:0,r:1},{id:'releases',name:'版本记录',short:'版本',q:1,r:1},
+    {id:'audio',name:'音频素材',short:'音频',q:-2,r:2},{id:'community',name:'社区反馈',short:'社区',q:-1,r:2},{id:'memory',name:'项目记忆',short:'记忆',q:0,r:2}
+  ];
+  const sourceById=Object.fromEntries(sources.map(s=>[s.id,s]));
+  const jobs=[
+    {agent:'game-designer',source:'requirements',payload:'需求条目与验收条件'},
+    {agent:'lead-programmer',source:'code',payload:'代码结构与接口摘要'},
+    {agent:'art-director',source:'design',payload:'视觉规范与素材索引'},
+    {agent:'narrative-director',source:'narrative',payload:'世界观与角色资料'},
+    {agent:'qa-tester',source:'tests',payload:'测试记录与证据索引'},
+    {agent:'producer',source:'memory',payload:'项目目标与待确认事项'},
+    {agent:'sound-designer',source:'audio',payload:'声音素材与音效索引'},
+    {agent:'release-manager',source:'releases',payload:'版本变化与交付记录'}
+  ].map((j,i)=>({...j,index:i,start:i*.4,packet:'DEMO-P'+String(i+1).padStart(2,'0')}));
+  const jobByAgent=Object.fromEntries(jobs.map(j=>[j.agent,j])),jobBySource=Object.fromEntries(jobs.map(j=>[j.source,j]));
+  const duration=20,map=q('#hf-map'),canvas=q('#hf-trails'),ctx=canvas.getContext('2d');
+  const colors={blue:'#94cce2',gold:'#e6bf7b',ink:'#f1eee6',metal:'#8eaaaf',body:'#24363e',line:'#3a515b'};
+  const preference=window.matchMedia('(prefers-reduced-motion: reduce)');
+  let clock=0,playing=!preference.matches,reduced=preference.matches,speed=1,frame=0,lastTick=0,selection={type:'agent',id:'game-designer'},positions={},radius=60,width=0,height=0,receiptKey='',lastPhaseKey='',sizeKey='',paths={},svg;
+  q('#hf-reduced').checked=reduced;
+  if(!window.d3){q('#hf-play-status').textContent='可视化组件未加载，请重新打开';q('#hf-play').disabled=true;q('#hf-next').disabled=true;return;}
+  const d3=window.d3,hexLine=d3.line().curve(d3.curveLinearClosed),travelLine=d3.line().curve(d3.curveCatmullRom.alpha(.5));
+  svg=d3.select(q('#hf-grid'));
+  q('#hf-source-buttons').innerHTML=sources.map(s=>'<button type="button" class="hf-cell cursor-interaction" data-source="'+s.id+'" data-center="'+(s.id==='center')+'" aria-pressed="false" aria-label="'+esc((s.id==='center'?'中心归集仓':'演示资料源：'+s.name))+'"><b>'+s.short+'</b><small data-source-status="'+s.id+'">'+(s.id==='center'?'0 包':jobBySource[s.id]?'待采集':'未参与')+'</small></button>').join('');
+  q('#hf-bees').innerHTML=jobs.map(j=>'<button type="button" class="hf-bee cursor-interaction" data-bee="'+j.agent+'" aria-label="'+esc(byId[j.agent].name+'机械蜂，查看详情')+'" aria-pressed="false" hidden><canvas width="120" height="120" aria-hidden="true"></canvas><span>'+byId[j.agent].code+'</span></button>').join('');
+  q('#hf-workers').innerHTML=jobs.map(j=>'<button type="button" class="hf-worker cursor-interaction" data-agent="'+j.agent+'" aria-pressed="'+(j.agent===selection.id)+'"><span class="hf-worker-code">'+byId[j.agent].code+'</span><span><b>'+esc(byId[j.agent].name)+'</b><small data-worker-state="'+j.agent+'">待出发</small></span></button>').join('');
+  q('#hf-roster').innerHTML=agents.map(a=>'<button type="button" class="hf-roster-node cursor-interaction" data-agent="'+a.id+'" data-demo="'+Boolean(jobByAgent[a.id])+'" aria-pressed="'+(a.id===selection.id)+'"><small>'+byId[a.id].code+' · '+({leadership:'L1',department:'L2',general:'L3',engine:'L3'}[a.group])+'</small><b>'+esc(a.name)+'</b></button>').join('');
+  const beeEls=Object.fromEntries(qa('[data-bee]').map(b=>[b.dataset.bee,b]));
+  const stateFor=j=>{
+    const t=clock-j.start;
+    return t<0?{phase:'待出发',stage:'idle',p:0}:t<5?{phase:'前往数据源',stage:'out',p:t/5}:t<9?{phase:'采集中',stage:'collect',p:(t-5)/4}:t<15?{phase:'携包回巢',stage:'back',p:(t-9)/6}:t<16?{phase:'存入中心',stage:'drop',p:t-15}:{phase:'已归集 · 待核验',stage:'done',p:1};
+  };
+  function controls(){
+    q('#hf-play').textContent=playing?'暂停演示':clock>=duration?'重播演示':'播放演示';
+    q('#hf-play-status').textContent=clock>=duration?'演示归集完成 · 全部待核验':playing?(reduced?'静态阶段回放中':'演示播放中'):'已暂停';
+    q('#hf-next').disabled=clock>=duration;
+  }
+  function pause(){playing=false;if(frame){cancelAnimationFrame(frame);frame=0;}lastTick=0;controls();root.dataset.playing='false';}
+  function select(type,id){pause();selection={type,id};renderInspector();updateSelection();q('#hf-announcement').textContent='已选中'+(type==='agent'?byId[id].name:sourceById[id].name);}
+  function updateSelection(){
+    qa('[data-agent]').forEach(b=>b.setAttribute('aria-pressed',String(selection.type==='agent'&&selection.id===b.dataset.agent)));
+    qa('[data-bee]').forEach(b=>b.setAttribute('aria-pressed',String(selection.type==='agent'&&selection.id===b.dataset.bee)));
+    qa('[data-source]').forEach(b=>b.setAttribute('aria-pressed',String(selection.type==='source'&&selection.id===b.dataset.source)));
+  }
+  function renderInspector(){
+    const isAgent=selection.type==='agent',a=isAgent?byId[selection.id]:null,s=isAgent?(jobByAgent[a.id]?sourceById[jobByAgent[a.id].source]:null):sourceById[selection.id],j=isAgent?jobByAgent[a.id]:jobBySource[s.id],center=s?.id==='center';
+    let html='<div class="hf-inspector-label"><span>'+ (isAgent?'工蜂岗位 / '+a.code:center?'蜂巢中心':'示例资料源')+'</span><span class="hf-tag '+(center?'hf-gold-tag':'')+'">'+(center?'归集区':j?'参与演示':'未参与')+'</span></div><h3>'+esc(isAgent?a.name:s.name)+'</h3>';
+    if(isAgent)html+='<div class="hf-code">'+a.id+'</div>';
+    html+='<p class="hf-description">'+esc(isAgent?a.summary:center?'接收工蜂带回的数据包，保留来源与岗位身份，进入待核验队列。':'此蜂室表示'+s.name+'这一类资料；内容与采集过程均为演示。')+'</p>';
+    if(j){
+      html+='<dl class="hf-kv"><div><dt>资料源</dt><dd>'+sourceById[j.source].name+'</dd></div><div><dt>演示阶段</dt><dd id="hf-selected-state"></dd></div><div><dt>数据包</dt><dd class="hf-code" id="hf-selected-packet"></dd></div><div><dt>真实运行</dt><dd>未知 · 未连接</dd></div></dl><details id="hf-data-detail"><summary class="cursor-interaction">查看蜜滴数据包</summary><pre id="hf-packet-json"></pre></details>';
+    }else if(center)html+='<div class="hf-check-note">已归集 ≠ 已验收<br>本轮演示不执行质量验收或发布。</div>';
+    else html+='<dl class="hf-kv"><div><dt>本次示例</dt><dd>未安排采集</dd></div><div><dt>真实运行</dt><dd>未知 · 未连接</dd></div></dl>';
+    if(a)html+='<a class="hf-source-link" href="https://github.com/Donchitos/Claude-Code-Game-Studios/blob/05ad7c8a5b8aa2aa86bbd3439ae7cf7295cac418/.claude/agents/'+a.id+'.md" target="_blank" rel="noopener noreferrer">查看岗位定义 ↗</a>';
+    q('#hf-inspector').innerHTML=html;
+    if(q('#hf-data-detail'))q('#hf-data-detail').addEventListener('toggle',()=>{if(q('#hf-data-detail').open)pause();});
+    lastPhaseKey='';paint();
+  }
+  function drawBee(j,state,heading){
+    const c=beeEls[j.agent].querySelector('canvas'),g=c.getContext('2d'),flap=reduced?1:.8+Math.sin(clock*22+j.index)*.2;
+    g.setTransform(2,0,0,2,60,60);g.clearRect(-30,-30,60,60);g.rotate(heading+Math.PI/2);
+    g.lineCap='round';g.lineJoin='round';
+    g.fillStyle='rgba(148,204,226,.38)';g.strokeStyle=colors.blue;g.lineWidth=1;
+    for(const sign of [-1,1]){g.beginPath();g.ellipse(sign*10,-3,8.4*flap,12.5,sign*.6,0,Math.PI*2);g.fill();g.stroke();}
+    g.strokeStyle=colors.metal;g.lineWidth=1.4;
+    for(const sign of [-1,1])for(const y of [-3,3,9]){g.beginPath();g.moveTo(sign*5,y);g.lineTo(sign*10,y+3);g.lineTo(sign*13,y+1);g.stroke();}
+    g.fillStyle=colors.body;g.strokeStyle=colors.gold;g.lineWidth=1.4;
+    g.beginPath();g.moveTo(-6,-7);g.lineTo(6,-7);g.lineTo(8,5);g.lineTo(4,14);g.lineTo(-4,14);g.lineTo(-8,5);g.closePath();g.fill();g.stroke();
+    g.fillStyle=colors.gold;g.fillRect(-6,-1,12,3);g.fillRect(-5,6,10,3);
+    g.fillStyle='#405560';g.strokeStyle=colors.metal;g.beginPath();g.arc(0,-11,6.3,0,Math.PI*2);g.fill();g.stroke();
+    g.fillStyle=colors.blue;g.fillRect(-4.5,-13,3,2.5);g.fillRect(1.5,-13,3,2.5);
+    g.strokeStyle=colors.metal;g.beginPath();g.moveTo(-3,-16);g.lineTo(-6,-21);g.moveTo(3,-16);g.lineTo(6,-21);g.stroke();
+    if(state.stage==='back'||state.stage==='drop'){
+      g.fillStyle=colors.gold;g.shadowColor=colors.gold;g.shadowBlur=5;g.beginPath();g.moveTo(0,13);g.bezierCurveTo(-10,22,-4,28,0,28);g.bezierCurveTo(7,28,9,21,0,13);g.fill();g.shadowBlur=0;
+    }
+  }
+  function layout(){
+    width=map.clientWidth;if(width<1)return;
+    radius=Math.min(75,(width-34)/(5*Math.sqrt(3)));height=Math.max(340,8*radius+54);map.style.height=height+'px';
+    map.dataset.compact=String(width<500);map.style.setProperty('--hf-label-offset',radius*.34+'px');
+    const cx=width/2,cy=height/2+8;
+    sources.forEach(s=>{positions[s.id]={x:cx+Math.sqrt(3)*radius*(s.q+s.r/2),y:cy+1.5*radius*s.r};});
+    svg.attr('viewBox','0 0 '+width+' '+height);
+    svg.selectAll('path.hf-hex').data(sources,s=>s.id).join('path').attr('class','hf-hex').attr('data-cell',s=>s.id).attr('d',s=>{
+      const p=positions[s.id],r=radius-3;
+      return hexLine(d3.range(6).map(i=>{const angle=(30+i*60)*Math.PI/180;return[p.x+Math.cos(angle)*r,p.y+Math.sin(angle)*r];}));
+    }).attr('stroke-width',s=>s.id==='center'?2:1);
+    qa('[data-source]').forEach(b=>{const p=positions[b.dataset.source],w=Math.max(44,radius*1.4),h=Math.max(44,radius*1.25);b.style.width=w+'px';b.style.height=h+'px';b.style.left=(p.x-w/2)+'px';b.style.top=(p.y-h/2)+'px';});
+    const dpr=Math.min(window.devicePixelRatio||1,2);canvas.width=Math.round(width*dpr);canvas.height=Math.round(height*dpr);ctx.setTransform(dpr,0,0,dpr,0,0);
+    const center=positions.center;
+    jobs.forEach(j=>{
+      const dest=positions[j.source],dx=dest.x-center.x,dy=dest.y-center.y,length=Math.hypot(dx,dy),nx=-dy/length,ny=dx/length;
+      const bend=(j.index%2?1:-1)*radius*.55;
+      const out=travelLine([[center.x,center.y],[(center.x+dest.x)/2+nx*bend,(center.y+dest.y)/2+ny*bend],[dest.x,dest.y]]);
+      const back=travelLine([[dest.x,dest.y],[(center.x+dest.x)/2-nx*bend,(center.y+dest.y)/2-ny*bend],[center.x,center.y]]);
+      const pathOut=document.createElementNS('http://www.w3.org/2000/svg','path'),pathBack=document.createElementNS('http://www.w3.org/2000/svg','path');
+      pathOut.setAttribute('d',out);pathBack.setAttribute('d',back);paths[j.agent]={out:pathOut,back:pathBack,outLen:pathOut.getTotalLength(),backLen:pathBack.getTotalLength()};
+    });
+    paint();
+  }
+  function paint(){
+    if(!positions.center)return;
+    ctx.clearRect(0,0,width,height);
+    const states=jobs.map(j=>({j,s:stateFor(j)})),delivered=states.filter(x=>x.s.stage==='done'),moving=states.filter(x=>['out','back'].includes(x.s.stage)).length;
+    let collected=0;
+    for(const {j,s} of states){
+      const b=beeEls[j.agent],dest=positions[j.source],center=positions.center,p=paths[j.agent];
+      let pos=center,heading=-Math.PI/2;
+      const visible=!['idle','done'].includes(s.stage);
+      b.hidden=!visible;
+      if(s.stage==='out'||s.stage==='back'){
+        const path=s.stage==='out'?p.out:p.back,len=s.stage==='out'?p.outLen:p.backLen;
+        const ratio=reduced?(s.stage==='out'?1:0):s.p;
+        pos=path.getPointAtLength(ratio*len);const ahead=path.getPointAtLength(Math.min(len,ratio*len+2)),behind=path.getPointAtLength(Math.max(0,ratio*len-2));
+        heading=Math.atan2(ahead.y-behind.y,ahead.x-behind.x);
+        if(!reduced){
+          ctx.strokeStyle=s.stage==='back'?'rgba(230,191,123,.24)':'rgba(148,204,226,.18)';ctx.lineWidth=1;
+          ctx.beginPath();for(let k=0;k<=28;k++){const v=path.getPointAtLength(len*k/28);if(k===0)ctx.moveTo(v.x,v.y);else ctx.lineTo(v.x,v.y);}ctx.stroke();
+          for(let k=1;k<=9;k++){const t=Math.max(0,ratio-k*.02),pt=path.getPointAtLength(len*t);ctx.globalAlpha=(1-k/10)*.6;ctx.fillStyle=s.stage==='back'?colors.gold:colors.blue;ctx.beginPath();ctx.arc(pt.x,pt.y,1.7,0,Math.PI*2);ctx.fill();}ctx.globalAlpha=1;
+        }
+      }else if(s.stage==='collect'){
+        pos={x:dest.x+(reduced?0:Math.cos(clock*2+j.index)*radius*.13),y:dest.y-radius*.55};heading=-Math.PI/2;
+        if(!reduced)for(let k=0;k<3;k++){const t=(clock*.6+k/3)%1,angle=j.index+k*2.1;ctx.fillStyle=colors.gold;ctx.globalAlpha=1-t;ctx.beginPath();ctx.arc(dest.x+Math.cos(angle)*(1-t)*radius*.3,dest.y-radius*.1-t*radius*.3,2.3,0,Math.PI*2);ctx.fill();ctx.globalAlpha=1;}
+      }else if(s.stage==='drop'){
+        pos={x:center.x,y:center.y-radius*.28};heading=Math.PI/2;
+        if(!reduced){ctx.strokeStyle=colors.gold;ctx.globalAlpha=1-s.p;ctx.lineWidth=2;ctx.beginPath();ctx.arc(center.x,center.y,radius*.3+s.p*radius*.65,0,Math.PI*2);ctx.stroke();ctx.globalAlpha=1;}
+      }
+      if(visible){b.style.left=(pos.x-(width<500?22:24))+'px';b.style.top=(pos.y-(width<500?22:28))+'px';drawBee(j,s,heading);}
+      q('[data-source="'+j.source+'"]').dataset.collecting=String(s.stage==='collect');
+      if(['back','drop','done'].includes(s.stage))collected++;
+      q('[data-worker-state="'+j.agent+'"]').textContent=s.phase;
+      q('[data-source-status="'+j.source+'"]').textContent=s.stage==='done'?'已归集':s.stage==='back'||s.stage==='drop'?'已采集':s.stage==='collect'?'采集中':'待采集';
+    }
+    svg.selectAll('path.hf-hex').attr('fill',s=>{
+      if(s.id==='center')return '#393329';const j=jobBySource[s.id];if(!j)return '#142129';
+      const st=stateFor(j).stage;return st==='collect'?'#254554':['back','drop','done'].includes(st)?'#39352b':'#1c303b';
+    }).attr('stroke',s=>s.id==='center'?colors.gold:jobBySource[s.id]&&['collect','out'].includes(stateFor(jobBySource[s.id]).stage)?'#6e9caa':colors.line);
+    const c=positions.center;
+    for(let i=0;i<delivered.length;i++){const angle=(-90+i*45)*Math.PI/180;ctx.fillStyle=colors.gold;ctx.beginPath();ctx.arc(c.x+Math.cos(angle)*radius*.76,c.y+Math.sin(angle)*radius*.76,Math.max(2.5,radius*.055),0,Math.PI*2);ctx.fill();}
+    q('[data-source-status="center"]').textContent=delivered.length+' / 8 包';
+    q('#hf-counts').textContent='已归集 '+delivered.length+' 包 · 待核验 '+delivered.length+' 包';
+    const percent=Math.round(clock/duration*100);q('#hf-percent').textContent=percent+'%';q('#hf-seek').value=String(Math.round(clock/duration*200));q('#hf-seek').setAttribute('aria-valuetext',percent+'%');
+    q('#hf-receipt-count').textContent=delivered.length+' / 8';
+    const key=delivered.map(x=>x.j.packet).join(',');
+    if(key!==receiptKey||!q('#hf-receipt-list').children.length){
+      q('#hf-receipt-list').innerHTML=delivered.length?delivered.map(({j})=>'<button type="button" class="hf-receipt cursor-interaction" data-receipt="'+j.agent+'"><span>'+esc(sourceById[j.source].name)+'<br><span class="hf-code">'+j.packet+'</span></span><small>待核验</small></button>').join(''):'<p class="hf-empty">还没有数据包归集。<br>工蜂返巢后会在这里留下记录。</p>';
+      receiptKey=key;
+    }
+    const job=selection.type==='agent'?jobByAgent[selection.id]:jobBySource[selection.id];
+    if(job&&q('#hf-selected-state')){
+      const st=stateFor(job),hasPacket=['back','drop','done'].includes(st.stage);
+      q('#hf-selected-state').textContent=st.phase;q('#hf-selected-packet').textContent=hasPacket?job.packet:'尚未采集完成';
+      const phaseKey=job.agent+'|'+st.stage;
+      if(phaseKey!==lastPhaseKey){
+        q('#hf-packet-json').textContent=hasPacket?JSON.stringify({demo:true,packet_id:job.packet,agent_id:job.agent,source:sourceById[job.source].name,content_summary:job.payload,storage:st.stage==='done'?'center':'in_transit',verification:'pending'},null,2):'当前还没有生成数据包。';
+        lastPhaseKey=phaseKey;
+      }
+    }
+    root.dataset.clock=clock.toFixed(3);root.dataset.delivered=String(delivered.length);root.dataset.collected=String(collected);root.dataset.moving=String(moving);root.dataset.playing=String(playing);root.dataset.reduced=String(reduced);
+  }
+  function tick(t){
+    frame=0;if(!playing)return;if(!lastTick)lastTick=t;const dt=Math.min(100,t-lastTick);lastTick=t;
+    clock=Math.min(duration,clock+dt/1000*speed);paint();
+    if(clock>=duration){pause();q('#hf-announcement').textContent='演示归集完成，8个数据包全部待核验。';return;}
+    frame=requestAnimationFrame(tick);
+  }
+  function play(){if(clock>=duration)clock=0;playing=true;lastTick=0;controls();paint();if(!frame)frame=requestAnimationFrame(tick);}
+  root.addEventListener('click',e=>{
+    const b=e.target.closest('button');if(!b||!root.contains(b))return;
+    if(b.id==='hf-play'){if(playing)pause();else play();return;}
+    if(b.id==='hf-restart'){pause();clock=0;paint();play();return;}
+    if(b.id==='hf-next'){pause();const stops=[0,5,9,15,16,18.8,20];clock=stops.find(t=>t>clock+.01)??duration;paint();controls();q('#hf-announcement').textContent='已定位到演示进度'+Math.round(clock/duration*100)+'%';return;}
+    if(b.dataset.bee){select('agent',b.dataset.bee);return;}
+    if(b.dataset.agent){select('agent',b.dataset.agent);return;}
+    if(b.dataset.source){select('source',b.dataset.source);return;}
+    if(b.dataset.receipt){select('agent',b.dataset.receipt);}
+  });
+  q('#hf-seek').addEventListener('input',e=>{pause();clock=Number(e.target.value)/200*duration;paint();controls();});
+  q('#hf-speed').addEventListener('change',e=>{speed=Number(e.target.value);q('#hf-announcement').textContent='回放速度已切换为'+speed+'倍';});
+  q('#hf-reduced').addEventListener('change',e=>{reduced=e.target.checked;paint();controls();});
+  preference.addEventListener('change',e=>{if(e.matches){reduced=true;q('#hf-reduced').checked=true;pause();paint();}});
+  document.addEventListener('visibilitychange',()=>{if(document.hidden)pause();});
+  new ResizeObserver(()=>{const key=String(map.clientWidth);if(key!==sizeKey){sizeKey=key;layout();}}).observe(map);
+  layout();renderInspector();updateSelection();controls();if(playing)frame=requestAnimationFrame(tick);
+})();
+</script>

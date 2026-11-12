@@ -1,0 +1,4 @@
+{
+  "bot_token": "从 @BotFather 获取，填入后另存为 telegram.local.json",
+  "allowed_user_ids": [123456789]
+}

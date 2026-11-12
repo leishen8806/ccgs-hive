@@ -1,0 +1,29 @@
+<!doctype html><html><head><meta charset="utf-8"><link rel="icon" href="assets/drlife-logo-mark.png"><title>Dr.life+ · styles-pack 接线示例</title><style>
+html,body{margin:0;background:#000;overflow:hidden}
+#wrap{position:absolute;left:0;top:0;width:1920px;height:1080px;transform-origin:0 0}
+#top{height:120px;background:#0b1317;color:#ccc;font:14px sans-serif;padding:10px;display:flex;align-items:flex-start;gap:14px}
+#top .brand-logo{height:56px;width:auto;object-fit:contain}
+#host{position:absolute;left:0;top:120px}
+</style></head><body><div id="wrap"><div id="top"><img class="brand-logo" src="assets/drlife-logo.png" alt="Dr.life+" onerror="this.onerror=null;this.replaceWith(Object.assign(document.createElement('b'),{textContent:'Dr.life+'}))"><div style="font:15px 'Microsoft YaHei',sans-serif;color:#cfe3e8">styles-pack.js 接线示例（模拟数据）：<span id="btns"></span><br><small style="color:#8299a1">本页只演示接口用法：14 只模拟蜂驱动 7 种风格。正式效果请看 bigscreen.html。</small></div></div><div id="host"></div></div>
+<script src="ccgs49-data.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/d3@7.9.0/dist/d3.min.js"></script>
+<script src="styles-pack.js"></script>
+<script>
+const D=window.CCGS49, host=document.getElementById('host');
+const pack=CCGSStylePack.create(host,D,{style:new URLSearchParams(location.search).get('style')||'mesh',hubLogo:'assets/drlife-logo-mark.png'});
+function fit(){ const s=Math.min(innerWidth/1920,innerHeight/1080); document.getElementById('wrap').style.transform=`scale(${s})`; pack.resize(s*Math.min(devicePixelRatio||1,2)); }
+addEventListener('resize',fit); fit();
+// 模拟大屏的蜂：类似 bigscreen 的 dock→out→collect→back→drop
+const bees=D.roles.slice(0,14).map((r,i)=>({key:r.id,roleId:r.id,inputs:r.inputs.map(x=>x.src),k:0,state:'dock',t:-i*.4,dur:0}));
+function step(b,dt){ b.t+=dt; if(b.state==='dock'){ if(b.t>=0){b.state='out';b.t=0;b.dur=1.8;b.src=b.inputs[b.k++%b.inputs.length];} }
+ else if(b.state==='out'&&b.t>=b.dur){b.state='collect';b.t=0;b.dur=1.2;} else if(b.state==='collect'&&b.t>=b.dur){b.state='back';b.t=0;b.dur=1.8;}
+ else if(b.state==='back'&&b.t>=b.dur){b.state='drop';b.t=0;b.dur=.35;} else if(b.state==='drop'&&b.t>=b.dur){b.state='dock';b.t=-.5;} }
+let last=performance.now(), done=0;
+function frame(now){ const dt=Math.min(.05,(now-last)/1000); last=now; bees.forEach(b=>step(b,dt));
+  const list=bees.filter(b=>b.state!=='dock').map(b=>({key:b.key,roleId:b.roleId,src:b.src,state:b.state,frac:b.state==='out'?b.t/b.dur:b.state==='back'?1-b.t/b.dur:b.state==='collect'?1:0}));
+  pack.frame(dt,list,{mode:'demo',centerText:'演示归集 '+(done)}); requestAnimationFrame(frame); }
+requestAnimationFrame(frame);
+window.__pack=pack;
+document.getElementById('btns').innerHTML=CCGSStylePack.STYLES.map(x=>`<button data-s="${x.id}" style="margin:0 4px;padding:4px 10px;background:#101b21;color:#e9eef0;border:1px solid #1d2c33;border-radius:5px;cursor:pointer">${x.name}</button>`).join('');
+document.getElementById('btns').onclick=e=>{ const b=e.target.closest('[data-s]'); if(b) pack.setStyle(b.dataset.s); };
+</script></body></html>

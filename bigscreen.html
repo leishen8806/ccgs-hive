@@ -1,0 +1,897 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" href="assets/drlife-logo-mark.png">
+<title>Dr.life+ · 蜂巢分工集群</title>
+<style>
+:root{
+  --bg:#0a1115;--panel:rgba(18,31,38,.78);--panel-2:rgba(26,43,51,.85);--line:#26404a;--line-soft:rgba(80,120,135,.25);
+  --ink:#eef0ea;--muted:#8fa6ad;--dim:#5d747b;--amber:#f0c27b;--amber-2:#ffdca3;--blue:#9fd3ea;--blue-2:#cdeefa;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{width:100%;height:100%;overflow:hidden;background:#05090b;color:var(--ink);
+  font-family:"Microsoft YaHei","PingFang SC","Segoe UI",sans-serif;-webkit-font-smoothing:antialiased}
+button,select{font:inherit;color:inherit}
+#stage{position:absolute;left:0;top:0;width:1920px;height:1080px;transform-origin:0 0;overflow:hidden;
+  background:
+    radial-gradient(ellipse 900px 600px at 960px 500px,rgba(240,194,123,.07),transparent 70%),
+    radial-gradient(ellipse 1400px 900px at 960px 540px,rgba(159,211,234,.05),transparent 70%),
+    var(--bg)}
+#stage::before{content:"";position:absolute;inset:0;pointer-events:none;
+  background-image:linear-gradient(rgba(159,211,234,.035) 1px,transparent 1px),linear-gradient(90deg,rgba(159,211,234,.035) 1px,transparent 1px);
+  background-size:48px 48px;mask-image:radial-gradient(ellipse at center,#000 30%,transparent 80%)}
+.num{font-family:"Bahnschrift","DIN Alternate","Segoe UI",sans-serif;font-variant-numeric:tabular-nums}
+
+header{position:absolute;left:32px;right:32px;top:0;height:88px;display:flex;align-items:center;gap:20px;border-bottom:1px solid var(--line)}
+header::after{content:"";position:absolute;left:50%;bottom:-1px;width:520px;height:1px;transform:translateX(-50%);background:linear-gradient(90deg,transparent,var(--amber),transparent)}
+.brand{display:flex;align-items:center;gap:18px}
+.brand-logo{height:56px;width:auto;max-width:176px;object-fit:contain}
+.wordmark{font:600 26px/1 "Bahnschrift","Segoe UI",sans-serif;letter-spacing:.14em;color:var(--amber)}
+.title{border-left:1px solid var(--line);padding-left:18px}
+.title h1{font-size:24px;font-weight:500;letter-spacing:.06em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.title p{font-size:12px;letter-spacing:.12em;color:var(--muted);margin-top:4px}
+.spacer{flex:1}
+.badge{font-size:12px;color:var(--amber);border:1px solid rgba(240,194,123,.4);background:rgba(240,194,123,.08);padding:6px 12px;border-radius:999px;display:flex;align-items:center;gap:8px;white-space:nowrap}
+.badge i{width:7px;height:7px;border-radius:50%;background:var(--amber);box-shadow:0 0 8px var(--amber);animation:blink 1.6s infinite}
+@keyframes blink{50%{opacity:.3}}
+.clock{font-size:28px;color:var(--blue-2);letter-spacing:.04em}
+.clock small{display:block;font-size:12px;color:var(--muted);letter-spacing:.1em;font-family:"Microsoft YaHei",sans-serif}
+.ctrl{display:flex;gap:8px;align-items:center;white-space:nowrap;flex-shrink:0}
+.ctrl button,.ctrl select{height:36px;padding:0 14px;background:var(--panel-2);border:1px solid var(--line);border-radius:6px;font-size:13px;cursor:pointer}
+.ctrl button:hover,.ctrl select:hover{border-color:var(--blue)}
+.ctrl label{display:flex;align-items:center;gap:6px;font-size:13px;color:var(--muted);cursor:pointer}
+.ctrl input{accent-color:var(--amber)}
+
+.panel{position:absolute;background:var(--panel);border:1px solid var(--line);border-radius:10px;backdrop-filter:blur(6px)}
+.panel::before,.panel::after{content:"";position:absolute;width:14px;height:14px;border:2px solid var(--amber);opacity:.7;pointer-events:none}
+.panel::before{left:-1px;top:-1px;border-right:0;border-bottom:0;border-top-left-radius:10px}
+.panel::after{right:-1px;bottom:-1px;border-left:0;border-top:0;border-bottom-right-radius:10px}
+.ph{display:flex;align-items:baseline;justify-content:space-between;padding:16px 20px 10px}
+.ph h2{font-size:16px;font-weight:500;letter-spacing:.06em;display:flex;align-items:center;gap:8px}
+.ph h2::before{content:"";width:4px;height:14px;background:var(--amber);border-radius:2px;box-shadow:0 0 8px var(--amber)}
+.ph span{font-size:12px;color:var(--muted)}
+
+#left{left:32px;top:108px;width:400px;height:940px}
+#right{left:1488px;top:108px;width:400px;height:940px}
+#hive-wrap{position:absolute;left:456px;top:108px;width:1008px;height:752px}
+#hive{position:absolute;inset:0;width:1008px;height:752px;cursor:crosshair}
+#chart{left:456px;top:880px;width:1008px;height:168px}
+#style-layout{display:none;position:absolute;left:0;top:88px;width:1920px;height:992px}
+#style-stats{height:52px;display:grid;grid-template-columns:repeat(7,1fr);gap:1px;padding:8px 32px;background:rgba(7,14,18,.86);border-bottom:1px solid var(--line)}
+.style-stat{display:flex;align-items:baseline;gap:8px;padding:0 12px;border-left:1px solid var(--line-soft);white-space:nowrap}
+.style-stat b{font:500 21px Bahnschrift,"Segoe UI",sans-serif;color:var(--amber)}
+.style-stat span{font-size:11px;color:var(--muted)}
+#styles-host{position:absolute;left:0;top:52px;width:1920px;height:852px}
+#style-log{position:absolute;left:0;top:904px;width:1920px;height:88px;display:flex;flex-direction:column;gap:3px;padding:7px 32px;background:rgba(7,14,18,.92);border-top:1px solid var(--line);overflow:hidden}
+#style-log .log-row{padding:3px 10px;font-size:11px;line-height:1.35}
+#stage.style-pack-mode #style-layout{display:block}
+#stage.style-pack-mode #left,#stage.style-pack-mode #right,#stage.style-pack-mode #hive-wrap,#stage.style-pack-mode #chart{display:none}
+
+.kpis{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:4px 20px 6px}
+.kpi{background:rgba(10,20,25,.6);border:1px solid var(--line-soft);border-radius:8px;padding:9px 14px;position:relative;overflow:hidden}
+.kpi::after{content:"";position:absolute;right:-18px;top:-18px;width:56px;height:56px;border-radius:50%;background:radial-gradient(var(--c,rgba(159,211,234,.18)),transparent 70%)}
+.kpi b{display:block;font-size:26px;font-weight:500;line-height:1.15;color:var(--v,var(--ink))}
+.kpi b em{font-style:normal;font-size:13px;color:var(--muted);margin-left:4px}
+.kpi span{font-size:12px;color:var(--muted)}
+.kpi.amber{--v:var(--amber);--c:rgba(240,194,123,.22)}
+.kpi.blue{--v:var(--blue)}
+.kpi.warn b{color:var(--amber-2)}
+
+#roster-svg{display:block;margin:0 auto}
+.rhex{cursor:pointer}
+.rhex text{pointer-events:none}
+.glegend{display:flex;flex-wrap:wrap;gap:6px 12px;padding:6px 20px 0;font-size:12px;color:var(--muted)}
+.glegend i{display:inline-block;width:9px;height:9px;border-radius:2px;margin-right:5px;vertical-align:0}
+.run-summary{margin:10px 20px 0;padding:8px 10px;border:1px solid var(--line-soft);border-radius:6px;background:rgba(10,20,25,.45);font-size:11px;line-height:1.6;color:var(--muted)}
+.note{position:absolute;left:20px;right:20px;bottom:14px;font-size:11px;line-height:1.6;color:var(--dim)}
+
+.flows{padding:0 20px;display:flex;flex-direction:column;gap:6px}
+.flow{display:grid;grid-template-columns:1fr auto;gap:2px 10px;align-items:center;padding:7px 10px;border-radius:6px;background:rgba(10,20,25,.5);border:1px solid transparent;cursor:pointer}
+.flow:hover{border-color:var(--blue)}
+.flow .fn{font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.flow .fn code{font:11px Consolas,monospace;color:var(--muted);margin-right:6px}
+.flow .fs{font-size:11px;padding:1px 7px;border-radius:3px;white-space:nowrap}
+.fs.run{color:var(--blue-2);background:rgba(159,211,234,.2)}
+.fs.queue{color:var(--dim);background:rgba(93,116,123,.15)}
+.fs.done{color:var(--amber);background:rgba(240,194,123,.14)}
+.flow .bar{grid-column:1/3;height:4px;border-radius:2px;background:rgba(159,211,234,.08);overflow:hidden}
+.flow .bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--blue),var(--amber));transition:width .4s}
+.flow.active{border-color:rgba(159,211,234,.45);background:rgba(159,211,234,.06)}
+
+.log{padding:0 20px;display:flex;flex-direction:column;gap:6px;overflow:hidden;height:372px}
+.log-row{padding:7px 10px;border-radius:6px;background:rgba(10,20,25,.5);border-left:2px solid var(--blue);font-size:12px;animation:in .5s ease-out;line-height:1.55}
+.log-row.done{border-left-color:var(--amber);background:rgba(240,194,123,.07)}
+@keyframes in{from{opacity:0;transform:translateX(16px);background:rgba(240,194,123,.18)}}
+.log-row .l1{display:flex;justify-content:space-between;gap:8px;white-space:nowrap}
+.log-row .l1 span:first-child{overflow:hidden;text-overflow:ellipsis}
+.log-row .l1 b{font-weight:500;color:var(--blue)}
+.log-row.done .l1 b{color:var(--amber)}
+.log-row .t{color:var(--dim);font-size:11px}
+.log-row .l2{color:var(--muted);font-size:11px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tag{font-size:11px;color:var(--amber);border:1px solid rgba(240,194,123,.35);border-radius:3px;padding:0 5px;white-space:nowrap}
+
+#chart-svg{position:absolute;left:20px;top:44px}
+.foot-note{position:absolute;right:20px;top:16px;font-size:12px;color:var(--muted)}
+
+#tip{position:absolute;pointer-events:none;z-index:9;max-width:340px;padding:10px 12px;border-radius:8px;background:rgba(8,16,20,.95);border:1px solid var(--blue);font-size:12px;line-height:1.7;opacity:0;transition:opacity .12s;box-shadow:0 0 18px rgba(159,211,234,.18)}
+#tip h4{font-size:14px;font-weight:500;color:var(--amber);margin-bottom:2px}
+#tip span{color:var(--muted)}
+
+#modal{position:absolute;left:476px;top:124px;width:560px;max-height:720px;overflow:auto;z-index:8;padding:20px 22px;border-radius:10px;
+  background:rgba(9,17,21,.97);border:1px solid var(--blue);box-shadow:0 10px 40px rgba(0,0,0,.6),0 0 24px rgba(159,211,234,.15);display:none;font-size:13px;line-height:1.7}
+#modal.open{display:block}
+#modal .x{position:absolute;right:12px;top:10px;width:32px;height:32px;border:1px solid var(--line);border-radius:6px;background:var(--panel-2);cursor:pointer}
+#modal .eyebrow{font:12px Consolas,monospace;color:var(--muted)}
+#modal h3{font-size:20px;font-weight:500;color:var(--amber);margin:2px 0 8px}
+#modal h5{font-size:13px;font-weight:500;color:var(--blue);margin:12px 0 4px}
+#modal ul{padding-left:18px;color:#d6dcd8}
+#modal li{margin:2px 0}
+#modal .chips{display:flex;flex-wrap:wrap;gap:6px}
+#modal .chip{font-size:12px;padding:1px 8px;border-radius:4px;background:rgba(159,211,234,.1);border:1px solid var(--line-soft);cursor:pointer}
+#modal .chip:hover{border-color:var(--blue)}
+#modal .src{font-size:11px;color:var(--amber);border:1px solid rgba(240,194,123,.35);border-radius:3px;padding:0 5px;margin-left:6px;white-space:nowrap}
+#modal .kv{display:grid;grid-template-columns:96px 1fr;gap:2px 10px;color:#d6dcd8}
+#modal .kv dt{color:var(--muted)}
+#modal a{color:var(--amber)}
+#modal .go{margin-top:14px;height:36px;padding:0 16px;background:var(--amber);color:#0a1115;border:0;border-radius:6px;cursor:pointer;font-weight:500}
+#modal .warn{margin-top:12px;padding:8px 10px;border-radius:6px;background:rgba(240,194,123,.08);border:1px solid rgba(240,194,123,.3);color:var(--amber-2);font-size:12px}
+
+#err{position:absolute;inset:0;display:none;flex-direction:column;gap:12px;align-items:center;justify-content:center;font-size:20px;color:var(--amber);text-align:center;background:rgba(5,9,11,.92);z-index:20}
+#err code{font:16px Consolas,monospace;color:var(--blue-2);background:rgba(159,211,234,.1);padding:6px 12px;border-radius:6px}
+#err p{font-size:14px;color:var(--muted)}
+#dispatch-drawer{position:absolute;right:0;top:0;width:600px;height:1080px;z-index:30;background:rgba(7,14,18,.98);border-left:1px solid var(--blue);box-shadow:-18px 0 48px rgba(0,0,0,.55);display:none;font-family:Consolas,"Microsoft YaHei",monospace}
+#dispatch-drawer.open{display:flex;flex-direction:column}
+#dispatch-drawer .dh{height:72px;padding:18px 22px;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:12px}
+#dispatch-drawer .dh h2{font-size:16px;font-weight:500;color:var(--amber);flex:1}
+#dispatch-drawer .dx{width:32px;height:32px;background:var(--panel-2);border:1px solid var(--line);border-radius:6px;cursor:pointer}
+#dispatch-drawer .dsetup{padding:16px 22px;border-bottom:1px solid var(--line);font-family:"Microsoft YaHei",sans-serif}
+#dispatch-drawer label{display:block;color:var(--muted);font-size:12px;margin-bottom:6px}
+#dispatch-drawer select,#dispatch-drawer textarea{width:100%;background:#0d1b21;border:1px solid var(--line);border-radius:6px;color:var(--ink);padding:9px 10px;font:13px Consolas,"Microsoft YaHei",monospace}
+#dispatch-drawer textarea{height:88px;resize:vertical;margin-top:6px}
+#dispatch-drawer .dactions{display:flex;gap:8px;margin-top:10px}
+#dispatch-drawer .dactions button{height:34px;padding:0 14px;border-radius:5px;border:1px solid var(--line);background:var(--panel-2);cursor:pointer}
+#dispatch-drawer .dactions .send{color:#0a1115;background:var(--amber);border-color:var(--amber)}
+#dispatch-drawer .dactions button:disabled{opacity:.45;cursor:not-allowed}
+#btn-dispatch:disabled{opacity:.45;cursor:not-allowed}
+#dispatch-drawer .dstatus{font-size:12px;color:var(--muted);margin-top:8px;min-height:18px}
+#dispatch-log{flex:1;overflow:auto;padding:18px 22px;color:#d6dcd8;font-size:12px;line-height:1.65;white-space:pre-wrap}
+#dispatch-log .user{color:var(--blue-2);margin:0 0 12px}
+#dispatch-log .tool{color:#b9d6c6;margin:3px 0}
+#dispatch-log .system{color:var(--amber);margin:6px 0}
+#dispatch-log .err{color:#eba9a1;margin:6px 0}
+#dispatch-log .muted{color:var(--dim)}
+</style>
+</head>
+<body>
+<div id="stage">
+  <header>
+    <div class="brand">
+      <img class="brand-logo" src="assets/drlife-logo.png" alt="Dr.life+" onerror="this.onerror=null;this.replaceWith(Object.assign(document.createElement('span'),{className:'wordmark',textContent:'Dr.life+'}))">
+      <div class="title"><h1>蜂巢分工集群 · 49 岗协作调度</h1><p id="subtitle">AGENT LIBRARY</p></div>
+    </div>
+    <div class="spacer"></div>
+    <span class="badge" id="mode-badge"><i></i><span id="mode-badge-text">真实运行记录 · 回放</span></span>
+    <div class="ctrl">
+      <button id="btn-dispatch">派发任务</button>
+      <select id="sel-style" aria-label="风格"><option value="hive">蜂巢</option><option value="mesh">网状 Mesh</option><option value="galaxy">星系</option><option value="leaf">叶脉</option><option value="pcb">电路板</option><option value="cave">暗河</option><option value="factory">分拣工厂</option><option value="neural">神经网络</option></select>
+      <select id="sel-mode" aria-label="运行模式"><option value="replay">回放真实记录</option><option value="live">实时监控</option><option value="demo">演示调度</option></select>
+      <button id="btn-play">暂停</button>
+      <select id="sel-speed" aria-label="速度"><option value="0.5">0.5×</option><option value="1" selected>1×</option><option value="2">2×</option><option value="4">4×</option></select>
+      <label><input type="checkbox" id="chk-reduce">减少动效</label>
+      <label><input type="checkbox" id="chk-rotate">轮换</label>
+    </div>
+    <div class="clock num" id="clock">--:--:--<small id="date">--</small></div>
+  </header>
+
+  <div id="style-layout" aria-label="风格大屏布局">
+    <div id="style-stats">
+      <div class="style-stat"><b id="style-roles">0</b><span>岗位</span></div>
+      <div class="style-stat"><b id="style-active">0</b><span>运行中</span></div>
+      <div class="style-stat"><b id="style-done">0</b><span>已完成运行</span></div>
+      <div class="style-stat"><b id="style-inputs">0</b><span>输入</span></div>
+      <div class="style-stat"><b id="style-collab">0</b><span>协作关系</span></div>
+      <div class="style-stat"><b id="style-evals">0/0</b><span>评测 已执行/总数</span></div>
+      <div class="style-stat"><b id="style-flows">0</b><span>工作流</span></div>
+    </div>
+    <div id="styles-host"></div>
+    <div id="style-log"></div>
+  </div>
+
+  <section class="panel" id="left">
+    <div class="ph"><h2>岗位库态势</h2><span id="lib-meta">—</span></div>
+    <div class="kpis">
+      <div class="kpi"><b class="num" id="k-roles">0</b><span>岗位 · <em id="k-groups">0</em> 个分组</span></div>
+      <div class="kpi"><b class="num" id="k-flows">0</b><span>团队工作流</span></div>
+      <div class="kpi"><b class="num" id="k-collab">0</b><span>协作关系</span></div>
+      <div class="kpi warn"><b class="num" id="k-evals">0</b><span>评测用例 · 已执行 / 总数</span></div>
+      <div class="kpi blue"><b class="num" id="k-online">0</b><span id="k-online-label">出勤工蜂（当前任务）</span></div>
+      <div class="kpi blue"><b class="num" id="k-collect">0</b><span id="k-collect-label">采集中</span></div>
+      <div class="kpi amber"><b class="num" id="k-back">0</b><span id="k-back-label">携蜜返巢</span></div>
+      <div class="kpi amber"><b class="num" id="k-total">0</b><span id="k-total-label">已归集输入包</span></div>
+    </div>
+    <div class="ph" style="padding-top:12px"><h2>49 岗蜂群</h2><span>点击查看岗位定义</span></div>
+    <svg id="roster-svg" width="360" height="300"></svg>
+    <div class="glegend" id="glegend"></div>
+    <div class="run-summary" id="run-summary"></div>
+    <p class="note" id="lib-note"></p>
+  </section>
+
+  <div id="hive-wrap"><canvas id="hive"></canvas></div>
+
+  <section class="panel" id="chart">
+    <div class="ph"><h2 id="chart-title">归集吞吐</h2></div>
+    <span class="foot-note" id="chart-note">近 60 秒 · 每秒归集包数（演示时钟）</span>
+    <svg id="chart-svg" width="968" height="112"></svg>
+  </section>
+
+  <section class="panel" id="right">
+    <div class="ph"><h2 id="right-title">团队工作流</h2><span id="right-subtitle">最多 3 组并行 · 点击查看</span></div>
+    <div class="flows" id="flows"></div>
+    <div class="ph" style="padding-top:14px"><h2 id="log-title">实时归集流水</h2><span class="tag" id="log-tag">已归集 ≠ 已验收</span></div>
+    <div class="log" id="log"></div>
+  </section>
+
+  <div id="modal"></div>
+  <aside id="dispatch-drawer" aria-label="派发任务聊天窗口">
+    <div class="dh"><h2>派发任务 · CCGS 本地运行</h2><button class="dx" id="dispatch-close" aria-label="关闭">✕</button></div>
+    <div class="dsetup">
+      <label for="dispatch-role">目标岗位</label><select id="dispatch-role"><option value="">不指定岗位</option></select>
+      <label for="dispatch-text" style="margin-top:12px">任务</label><textarea id="dispatch-text" placeholder="输入要交给岗位的任务"></textarea>
+      <div class="dactions"><button class="send" id="dispatch-send">发送</button><button id="dispatch-cancel" disabled>取消</button></div>
+      <div class="dstatus" id="dispatch-status">正在检查本机派发服务…</div>
+    </div>
+    <div id="dispatch-log"><div class="muted">尚未派发任务。</div></div>
+  </aside>
+  <div id="tip"></div>
+  <div id="err"></div>
+</div>
+
+<script src="ccgs49-data.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/d3@7.9.0/dist/d3.min.js"></script>
+<script src="styles-pack.js"></script>
+<script>
+(() => {
+'use strict';
+const $=id=>document.getElementById(id);
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+function fail(html){ const e=$('err'); e.innerHTML=html; e.style.display='flex'; }
+if(!window.CCGS49){ fail('未找到岗位数据 ccgs49-data.js<p>在 ccgs-hive 文件夹里运行下面的命令生成，然后刷新本页：</p><code>python build_data.py</code>'); return; }
+if(!window.d3){ fail('可视化组件 D3 未加载<p>请联网后重新打开本页</p>'); return; }
+
+/* ---------- 岗位库数据（由 build_data.py 从 CCGS49 岗位库生成） ---------- */
+const D=window.CCGS49;
+const ROLES=D.roles, FLOWS=D.workflows, SOURCES=D.sources, META=D.meta;
+let RUN_DATA=D.runs||null;
+const roleById=Object.fromEntries(ROLES.map(r=>[r.id,r])), roleBySlug=Object.fromEntries(ROLES.map(r=>[r.slug,r]));
+const dispatch={runId:null,source:null,started:0,connected:false};
+const liveHealth={dataCheckedAt:0,dispatch:null};
+function dline(text,kind=''){ const log=$('dispatch-log'); const row=document.createElement('div'); row.className=kind; row.textContent=text; log.appendChild(row); log.scrollTop=log.scrollHeight; }
+function dispatchPrompt(){ const role=roleById[$('dispatch-role').value]; return role?`必须使用 Task 工具调用 \`${role.slug}\` 子代理完成以下任务，不要自己直接回答。\n\n${$('dispatch-text').value.trim()}`:$('dispatch-text').value.trim(); }
+function localDispatchAllowed(){ const h=location.hostname.toLowerCase(); return h==='127.0.0.1'||h==='::1'||h==='localhost'||h.endsWith('.localhost'); }
+function setDispatchAvailability(){ const allowed=localDispatchAllowed(); $('btn-dispatch').disabled=!allowed; $('btn-dispatch').title=allowed?'':'派发只能在本机进行（127.0.0.1:3300）'; $('dispatch-send').disabled=!allowed; if(!allowed) $('dispatch-status').textContent='派发只能在本机进行（127.0.0.1:3300）'; return allowed; }
+async function checkDispatch(){ if(!setDispatchAvailability()) return; try{ const r=await fetch('/api/health'); const x=await r.json(); dispatch.connected=!!x.ok; if(dispatch.connected){ liveHealth.dataCheckedAt=Number(x.dataCheckedAt)||0; syncDispatch(x.dispatch); $('dispatch-status').textContent=x.busy?'服务已连接 · 当前有任务运行中':'服务已连接 · 只接受一个运行中的任务'; if(realState.mode!=='live') setMode('live'); } }catch(_){ dispatch.connected=false; $('dispatch-status').textContent='未连接：请运行 python dispatch_server.py'; } }
+function openDispatch(role){ if(!localDispatchAllowed()) return; $('modal').classList.remove('open'); $('dispatch-drawer').classList.add('open'); if(role) $('dispatch-role').value=role.id; checkDispatch(); $('dispatch-text').focus(); }
+function closeDispatch(){ $('dispatch-drawer').classList.remove('open'); }
+function renderDispatchEvent(e){
+  if(e.type==='system'&&e.text){ dline('▶ '+e.text,'system'); return; }
+  if(e.type==='error'){ dline('出错：'+(e.text||e.message||'未知错误'),'err'); return; }
+  const content=Array.isArray(e.message?.content)?e.message.content:Array.isArray(e.content)?e.content:[];
+  for(const c of content){ if(c.type==='text'&&c.text) dline(c.text); if(c.type==='tool_use'){ const input=c.input||{}; const path=input.file_path||input.path||input.command||c.name||'工具'; dline(c.name==='Bash'?'● Bash('+String(path)+')':'● Update('+String(path)+')','tool'); if(c.name!=='Bash') dline('└ 工具调用已发送','tool'); } }
+  const text=e.delta?.text||e.text||e.result; if(typeof text==='string'&&text) dline(text);
+  if(e.type==='result'){ const sec=Math.round((Date.now()-dispatch.started)/1000); dline(`✻ 用时 ${durationText(sec)}${e.total_cost_usd?` · 费用 $${e.total_cost_usd}`:''}`,'system'); }
+}
+async function sendDispatch(){
+  if(dispatch.runId) return; const text=$('dispatch-text').value.trim(); if(!text) return;
+  const role=roleById[$('dispatch-role').value]; dline('> '+(role?role.id+' '+role.name:'不指定岗位')+'\n'+text,'user'); $('dispatch-send').disabled=true; $('dispatch-cancel').disabled=false; $('dispatch-status').textContent='正在派发…'; dispatch.started=Date.now();
+  try{ const r=await fetch('/api/dispatch',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({roleId:role?.id||'',text})}); const x=await r.json(); if(!r.ok) throw new Error(x.error||'派发失败'); dispatch.runId=x.runId; dispatch.source=new EventSource('/api/runs/'+x.runId+'/stream'); dispatch.source.onmessage=e=>renderDispatchEvent(JSON.parse(e.data)); dispatch.source.onerror=()=>{ if(dispatch.source) dispatch.source.close(); dispatch.runId=null; $('dispatch-send').disabled=false; $('dispatch-cancel').disabled=true; $('dispatch-status').textContent='任务结束或连接已关闭'; }; }
+  catch(e){ dline('出错：'+e.message,'err'); $('dispatch-send').disabled=false; $('dispatch-cancel').disabled=true; $('dispatch-status').textContent='派发失败'; }
+}
+async function cancelDispatch(){ if(!dispatch.runId) return; await fetch('/api/runs/'+dispatch.runId+'/cancel',{method:'POST'}); dline('已取消','system'); }
+function initDispatch(){
+  const sel=$('dispatch-role'); let group=''; for(const r of ROLES){ if(r.group!==group){ group=r.group; const og=document.createElement('optgroup'); og.label=r.group; sel.appendChild(og); sel._group=og; } const o=document.createElement('option'); o.value=r.id; o.textContent=r.id+' '+r.name; sel._group.appendChild(o); }
+  $('btn-dispatch').onclick=()=>openDispatch(); $('dispatch-close').onclick=closeDispatch; $('dispatch-send').onclick=sendDispatch; $('dispatch-cancel').onclick=cancelDispatch; $('dispatch-text').addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendDispatch();}}); checkDispatch();
+}
+const GROUPS=[...new Set(ROLES.map(r=>r.group))];
+const GPAL=['#ffdca3','#f0c27b','#9fd3ea','#b9a8ec','#8fd8ba','#eba9a1','#c9d48a','#a9c3f0'];
+const gcolor=g=>GPAL[GROUPS.indexOf(g)%GPAL.length];
+const num=id=>id.replace(/\D+/g,'');
+const DIR={delegates_to:'下派',reports_to:'上报',collaborates_with:'协作'};
+
+/* ---------- 舞台 ---------- */
+const W=1920,H=1080,stage=$('stage');
+let scale=1;
+const HW=1008,HH=752,CX=HW/2,CY=HH/2+4,R=64,SQ3=Math.sqrt(3);
+const canvas=$('hive'),ctx=canvas.getContext('2d');
+const staticLayer=document.createElement('canvas'),sctx=staticLayer.getContext('2d');
+let K=1;
+
+/* ---------- styles-pack 接线：只换宿主布局，不换现有状态 ---------- */
+const STYLE_PACK=window.CCGSStylePack;
+const STYLE_IDS=['hive',...STYLE_PACK.STYLES.map(s=>s.id)];
+const styleParam=new URLSearchParams(location.search).get('style');
+const savedStyle=window.CCGS_DEMO?'hive':(()=>{try{return localStorage.getItem('ccgs-style')}catch(_){return null}})();
+let visualStyle=STYLE_IDS.includes(styleParam)?styleParam:STYLE_IDS.includes(savedStyle)?savedStyle:'hive';
+let rotateStyle=(()=>{try{return localStorage.getItem('ccgs-style-rotate')==='1'}catch(_){return false}})();
+let pack=null;
+function styleState(){ return {width:1920,height:852,roles:ROLES,sources:SOURCES,bees,centerText:()=>realState.mode==='demo'?'演示归集 '+total:'已完成运行 '+realState.done,reduced}; }
+function updateStyleStats(){
+  const real=realState.mode!=='demo', summaries=roleRunSummary();
+  const active=real?summaries.filter(x=>x.active).length:bees.filter(b=>b.state!=='dock').length;
+  const done=real?realState.done:total;
+  $('style-roles').textContent=META.counts.roles; $('style-active').textContent=active; $('style-done').textContent=done;
+  $('style-inputs').textContent=META.counts.inputs; $('style-collab').textContent=META.counts.collaboration;
+  $('style-evals').textContent=META.counts.evalsRun+'/'+META.counts.evals; $('style-flows').textContent=META.counts.workflows;
+}
+function setVisualStyle(id,persist=true){
+  if(!STYLE_IDS.includes(id)) id='hive';
+  visualStyle=id;
+  $('sel-style').value=id;
+  if(persist) try{localStorage.setItem('ccgs-style',id)}catch(_){ }
+  stage.classList.toggle('style-pack-mode',id!=='hive');
+  if(pack&&id!=='hive') pack.setStyle(id);
+  $('chart-note').textContent=id==='hive'?'近 60 秒 · 每秒归集包数（演示时钟）':pack.legendHtml(realState.mode);
+  updateStyleStats();
+}
+function nextVisualStyle(){ const i=STYLE_IDS.indexOf(visualStyle); setVisualStyle(STYLE_IDS[(i+1)%STYLE_IDS.length]); }
+
+/* ---------- D3 蜂巢布局 ---------- */
+const DIRS=[[1,0],[1,-1],[0,-1],[-1,0],[-1,1],[0,1]];
+function ring(k){ if(!k) return [[0,0]]; const out=[]; let q=DIRS[4][0]*k, r=DIRS[4][1]*k;
+  for(let i=0;i<6;i++) for(let j=0;j<k;j++){ out.push([q,r]); q+=DIRS[i][0]; r+=DIRS[i][1]; } return out; }
+const hexLine=d3.line();
+const axialToXY=(q,r)=>({x:CX+R*SQ3*(q+r/2), y:CY+R*1.5*r});
+const hexPts=(x,y,rad)=>d3.range(6).map(i=>{const a=(60*i-30)*Math.PI/180;return [x+rad*Math.cos(a),y+rad*Math.sin(a)];});
+const hexPath=(x,y,rad)=>new Path2D(hexLine(hexPts(x,y,rad))+'Z');
+const angleOf=c=>Math.atan2(c.y-CY,c.x-CX);
+
+const cells=[];
+function mk(q,r,ringN,kind,extra){ const p=axialToXY(q,r); const c={q,r,ring:ringN,kind,...p,path:hexPath(p.x,p.y,R-3),inner:hexPath(p.x,p.y,R-9),heat:0,flash:0,...extra}; cells.push(c); return c; }
+const center=mk(0,0,0,'center',{name:'中心归集仓'});
+const storage=ring(1).map(([q,r],i)=>mk(q,r,1,'storage',{name:'储蜜蜂室 '+String(i+1).padStart(2,'0'),fill:0,sealed:0})).sort((a,b)=>angleOf(a)-angleOf(b));
+const relay=ring(2).map(([q,r])=>mk(q,r,2,'relay',{name:'中转蜂室'}));
+const r3=ring(3).map(([q,r])=>({q,r,...axialToXY(q,r)})).sort((a,b)=>angleOf(a)-angleOf(b));
+const sourceCells=SOURCES.slice(0,r3.length).map((s,i)=>mk(r3[i].q,r3[i].r,3,'source',{...s,count:0,claims:0,roles:[]}));
+const cellBySrc=Object.fromEntries(sourceCells.map(c=>[c.id,c]));
+ROLES.forEach(r=>r.inputs.forEach(inp=>{ const c=cellBySrc[inp.src]||sourceCells[0]; inp.src=c.id; if(!c.roles.includes(r)) c.roles.push(r); }));
+const outer=ring(4).map(([q,r])=>({...axialToXY(q,r)}));
+
+/* ---------- 光晕 ---------- */
+function sprite(color,size=64){ const c=document.createElement('canvas'); c.width=c.height=size; const g=c.getContext('2d');
+  const gr=g.createRadialGradient(size/2,size/2,0,size/2,size/2,size/2); gr.addColorStop(0,color.replace('A','1')); gr.addColorStop(.25,color.replace('A','.45')); gr.addColorStop(1,color.replace('A','0'));
+  g.fillStyle=gr; g.fillRect(0,0,size,size); return c; }
+const GLOW_AMBER=sprite('rgba(240,194,123,A)'),GLOW_BLUE=sprite('rgba(159,211,234,A)');
+const C={amber:'#f0c27b',amber2:'#ffdca3',blue:'#9fd3ea',blue2:'#cdeefa',ink:'#eef0ea',muted:'#8fa6ad',line:'#2b4651',metal:'#8eaaaf',body:'#22343c'};
+
+function buildStatic(){
+  staticLayer.width=Math.round(HW*K); staticLayer.height=Math.round(HH*K);
+  sctx.setTransform(K,0,0,K,0,0); sctx.clearRect(0,0,HW,HH);
+  const g=sctx.createRadialGradient(CX,CY,0,CX,CY,420); g.addColorStop(0,'rgba(240,194,123,.10)'); g.addColorStop(.5,'rgba(159,211,234,.04)'); g.addColorStop(1,'rgba(0,0,0,0)');
+  sctx.fillStyle=g; sctx.fillRect(0,0,HW,HH);
+  for(const o of outer){ const d=Math.hypot(o.x-CX,o.y-CY); sctx.globalAlpha=Math.max(0,.28-d/2400); sctx.strokeStyle=C.line; sctx.lineWidth=1; sctx.stroke(hexPath(o.x,o.y,R-3)); }
+  sctx.globalAlpha=1;
+  for(const c of cells){
+    sctx.fillStyle=c.kind==='center'?'rgba(58,48,32,.9)':c.kind==='storage'?'rgba(32,34,30,.9)':c.kind==='relay'?'rgba(14,26,32,.75)':'rgba(19,36,45,.92)'; sctx.fill(c.path);
+    sctx.strokeStyle=c.kind==='center'?C.amber:c.kind==='storage'?'rgba(240,194,123,.45)':c.kind==='relay'?'rgba(43,70,81,.7)':'#35596a';
+    sctx.lineWidth=c.kind==='center'?2:1.2; sctx.stroke(c.path);
+    if(c.kind==='source'){ sctx.strokeStyle='rgba(159,211,234,.12)'; sctx.stroke(c.inner); }
+    if(c.kind==='relay'){ sctx.fillStyle='rgba(159,211,234,.18)'; for(let k=0;k<3;k++){ sctx.beginPath(); sctx.arc(c.x-8+k*8,c.y,1.4,0,7); sctx.fill(); } }
+  }
+}
+
+/* ---------- 机械蜂 = 岗位 ---------- */
+const rand=(a,b)=>a+Math.random()*(b-a);
+const ease=t=>t<.5?2*t*t:1-Math.pow(-2*t+2,2)/2;
+const bez=(p0,c,p1,t)=>({x:(1-t)*(1-t)*p0.x+2*(1-t)*t*c.x+t*t*p1.x, y:(1-t)*(1-t)*p0.y+2*(1-t)*t*c.y+t*t*p1.y});
+const bezD=(p0,c,p1,t)=>Math.atan2(2*(1-t)*(c.y-p0.y)+2*t*(p1.y-c.y), 2*(1-t)*(c.x-p0.x)+2*t*(p1.x-c.x));
+const bees=ROLES.map((role,i)=>{ const a=-Math.PI/2+i/ROLES.length*Math.PI*2;
+  const dock={x:CX+Math.cos(a)*R*.8,y:CY+Math.sin(a)*R*.8};
+  return {i,role,dock,pos:{...dock},heading:a,state:'dock',t:0,dur:0,queue:[],task:null,src:null,slot:0,packet:null,trips:0}; });
+const beeById=Object.fromEntries(bees.map(b=>[b.role.id,b]));
+pack=STYLE_PACK.create($('styles-host'),window.CCGS49,{legend:true,hubLogo:'assets/drlife-logo-mark.png'});
+
+/* ---------- 真实运行记录 ---------- */
+const normalizeRuns=data=>(data?.runs||[]).map((r,i)=>({...r,index:i,startMs:Date.parse(r.start),endMs:r.end?Date.parse(r.end):null}));
+const normalizeEvents=data=>(data?.events||[]).map((e,i)=>({...e,index:i,ms:Date.parse(e.t)})).sort((a,b)=>a.ms-b.ms||a.index-b.index);
+let REAL_RUNS=normalizeRuns(RUN_DATA), REAL_EVENTS=normalizeEvents(RUN_DATA);
+const INITIAL_MODE=window.CCGS_DEMO?'demo':(()=>{try{return localStorage.getItem('ccgs-mode')}catch(_){return null}})();
+const realState={mode:REAL_RUNS.length?(INITIAL_MODE==='live'||INITIAL_MODE==='demo'?INITIAL_MODE:'replay'):'demo',play:0,actualMs:REAL_EVENTS[0]?.ms||Date.now(),eventIndex:0,active:new Map(),dispatchSeen:new Map(),done:0,started:false,lastRefresh:Date.now(),replayLength:0,uiDirty:true,timelineDirty:true};
+function syncDoneCount(){ realState.done=REAL_RUNS.filter(r=>r.roleId&&r._ended).length; total=realState.done; }
+function buildReplayClock(){
+  let p=0,prev=REAL_EVENTS[0]?.ms||Date.now();
+  for(const e of REAL_EVENTS){ const gap=(e.ms-prev)/1000; p+=gap>600?1.5:gap/20; e.playAt=p; prev=e.ms; }
+  realState.replayLength=p+4;
+}
+buildReplayClock();
+function resetReal(){
+  realState.play=0; realState.actualMs=REAL_EVENTS[0]?.ms||Date.now(); realState.eventIndex=0; realState.active.clear(); realState.done=0; realState.started=false;
+  for(const b of bees){ b.realRun=null; b.realDone=false; b.queue=[]; b.task=null; b.src=null; b.claims=0; setState(b,'dock',.1); b.pos={...b.dock}; }
+  for(const s of sourceCells){ s.claims=0; s.count=0; s.heat=0; s.flash=0; }
+  for(const s of storage){ s.fill=0; s.sealed=0; }
+  total=0; logEl.innerHTML=''; $('style-log').innerHTML=''; pack.reset(); renderRealPanels(); renderRoster();
+  if(realState.mode==='live'){
+    realState.actualMs=Date.now();
+    for(const e of REAL_EVENTS) handleRealEvent(e);
+    realState.eventIndex=REAL_EVENTS.length;
+    syncDoneCount();
+    for(const b of bees) updateRealBee(b);
+  }
+}
+function roleRunSummary(){
+  const map=new Map();
+  for(const r of REAL_RUNS) if(r.roleId){ const role=roleById[r.roleId]; if(!role) continue; const item=map.get(r.roleId)||{role,runs:[],seconds:0,active:false};
+    item.runs.push(r); item.seconds+=((r.endMs||realState.actualMs)-r.startMs)/1000; item.active=item.active||!r.endMs; map.set(r.roleId,item); }
+  return [...map.values()];
+}
+function nonRoleRuns(){ return REAL_RUNS.filter(r=>!r.roleId); }
+function timelineRows(){
+  return [...roleRunSummary().map(x=>({id:x.role.id,label:x.role.id+' '+x.role.name,runs:x.runs})),
+    ...(nonRoleRuns().length?[{id:'fork',label:'fork（非岗位 agent）',runs:nonRoleRuns()}]:[])];
+}
+function realClockText(ms){ return new Date(ms).toTimeString().slice(0,8); }
+function realDuration(r){ return Math.max(0,((r.endMs||realState.actualMs)-r.startMs)/1000); }
+function durationText(sec){ const m=Math.floor(sec/60),s=Math.floor(sec%60); return m?`${m}分${String(s).padStart(2,'0')}秒`:`${s}秒`; }
+function realLogStart(r){ const role=roleById[r.roleId]; const label=role?`${r.roleId} ${role.name}`:'fork（非岗位 agent）'; addLog({html:`<div class="l1"><span><b>▶ ${esc(label)}</b> 开始运行</span><span class="t num">${realClockText(r.startMs)}</span></div><div class="l2">会话 ${esc(r.session.slice(0,8))}</div>`}); }
+function realLogDone(r){ const role=roleById[r.roleId]; const label=role?`${r.roleId} ${role.name}`:'fork（非岗位 agent）'; const files=(RUN_DATA.artifacts?.[role?.slug]||[]).map(a=>a.path.split('/').pop()).join('、'); addLog({done:true,html:`<div class="l1"><span><b>✓ ${esc(label)}</b> 运行完成 · 用时 ${durationText(realDuration(r))}</span><span class="t num">${realClockText(r.endMs)}</span></div><div class="l2">会话 ${esc(r.session.slice(0,8))}${files?' · 产出：'+esc(files):''}</div>`}); }
+function realStartRun(r){
+  if(!r.roleId){ realLogStart(r); return; }
+  const b=beeById[r.roleId]; if(!b) return;
+  realState.active.set(r.index,r); b.realRun=r; b.realDone=false; realLogStart(r);
+}
+function realFinishRun(r){
+  if(r.roleId){ const b=beeById[r.roleId]; if(b){ b.realDone=true; setState(b,'drop',.45); } syncDoneCount(); storage[realState.done%storage.length].fill=Math.min(100,storage[realState.done%storage.length].fill+12); center.flash=1; }
+  realLogDone(r);
+}
+function handleRealEvent(e){ const r=REAL_RUNS.find(x=>x.agent===e.agent&&x.session===e.session&&x.startMs===e.ms&&!x._started); if(e.kind==='start'){ const run=r||REAL_RUNS.find(x=>x.agent===e.agent&&x.session===e.session&&x.startMs===e.ms); if(run&&!run._started){run._started=true;realStartRun(run);} realState.uiDirty=true; realState.timelineDirty=true; return; }
+  const run=REAL_RUNS.find(x=>x.agent===e.agent&&x.session===e.session&&x.endMs===e.ms&&!x._ended); if(run&&!run._ended){run._ended=true; if(run.roleId) realState.active.delete(run.index); realFinishRun(run);} realState.uiDirty=true; realState.timelineDirty=true;
+}
+function refreshLiveData(next){
+  const nextRuns=normalizeRuns(next.runs), nextEvents=normalizeEvents(next.runs), oldRunFlags=new Map(REAL_RUNS.map(r=>[`${r.agent}|${r.session}|${r.start}`,{_started:r._started,_ended:r._ended}]));
+  REAL_RUNS=nextRuns; for(const r of REAL_RUNS){ const flags=oldRunFlags.get(`${r.agent}|${r.session}|${r.start}`); if(flags) Object.assign(r,flags); }
+  const oldKeys=new Set(REAL_EVENTS.map(e=>`${e.kind}|${e.session}|${e.agent}|${e.t}`)); REAL_EVENTS=nextEvents;
+  RUN_DATA=next.runs; let added=0; for(const e of REAL_EVENTS){ const key=`${e.kind}|${e.session}|${e.agent}|${e.t}`; if(!oldKeys.has(key)){ handleRealEvent(e); added++; } }
+  realState.eventIndex=REAL_EVENTS.length; realState.actualMs=Date.now(); syncDoneCount(); realState.uiDirty=added>0; realState.timelineDirty=added>0; realState.lastRefresh=Date.now();
+  return added;
+}
+function dispatchLogStart(x){ const b=beeById[x.roleId]; if(!b) return; const source=x.source==='telegram'?'Telegram':'本机'; addLog({html:`<div class="l1"><span><b>▶ ${esc(x.roleId+' '+(x.roleName||b.role.name))}</b> 派单运行（${source}）</span><span class="t num">${realClockText(x.startedAt)}</span></div><div class="l2">派发任务 · 非 audit log 子代理事件</div>`}); }
+function dispatchLogDone(x){ const b=beeById[x.roleId]; if(!b) return; const sec=Math.max(0,((x.endedAt||Date.now())-x.startedAt)/1000); const source=x.source==='telegram'?'Telegram':'本机'; addLog({done:true,html:`<div class="l1"><span><b>✓ 派单完成</b> · 用时 ${durationText(sec)}</span><span class="t num">${realClockText(x.endedAt||Date.now())}</span></div><div class="l2">${esc(x.roleId+' '+(x.roleName||b.role.name))} · ${source} 派发</div>`}); }
+function syncDispatch(x){
+  liveHealth.dispatch=x||null;
+  if(!x||!x.roleId||!beeById[x.roleId]) return;
+  const b=beeById[x.roleId], current=b.dispatchRun, seen=realState.dispatchSeen.get(x.id)||{started:false,done:false};
+  const own=dispatch.runId===x.id;
+  if(!seen.started && (x.status==='running'||own)){ dispatchLogStart(x); seen.started=true; }
+  if(x.status!=='running' && seen.started && !seen.done){ dispatchLogDone(x); seen.done=true; }
+  realState.dispatchSeen.set(x.id,seen);
+  if(x.status==='running' && (!current||current.id!==x.id)){
+    b.realDone=false; b.dispatchRun={id:x.id,startMs:x.startedAt,endMs:null}; b.dispatchDone=false; setState(b,'out',.1);
+  } else if(x.status!=='running'&&current?.id===x.id&&!b.dispatchDone){
+    b.dispatchRun.endMs=x.endedAt||Date.now(); b.dispatchDone=true; setState(b,'drop',.45);
+  }
+  realState.uiDirty=true; realState.timelineDirty=true;
+}
+function pollLiveData(){
+  if(realState.mode!=='live') return;
+  fetch('/api/health').then(r=>r.json()).then(x=>{ liveHealth.dataCheckedAt=Number(x.dataCheckedAt)||0; syncDispatch(x.dispatch); }).catch(()=>{});
+  const script=document.createElement('script'); script.src='ccgs49-data.js?t='+Date.now(); script.onload=()=>{ try{ const next=window.CCGS49, oldMeta=D.meta, nextRuns=next.runs||{}; if(next.meta?.builtAt!==oldMeta.builtAt||next.roles?.length!==ROLES.length){ $('lib-note').innerHTML='岗位库已更新，<button id="library-refresh" type="button">点击刷新</button>'; $('library-refresh').onclick=()=>location.reload(); return; } if(nextRuns.generatedAt!==RUN_DATA?.generatedAt||nextRuns.events?.length!==REAL_EVENTS.length) refreshLiveData(next); } finally{ script.remove(); } }; script.onerror=()=>script.remove(); document.head.appendChild(script);
+}
+function updateRealBee(b){
+  const r=b.dispatchRun||b.realRun; if(!r){ b.frac=0; if(b.state==='drop'){ b.t+=.016; if(b.t>=b.dur){b.realRun=null;b.dispatchRun=null;setState(b,'dock',.1);b.pos={...b.dock};} } return; }
+  if(b.realDone||b.dispatchDone){ b.frac=0; b.t+=.016; const p=Math.min(1,b.t/b.dur); b.pos={x:b.dock.x+(CX-b.dock.x)*.35*Math.sin(p*Math.PI),y:b.dock.y+(CY-b.dock.y)*.35*Math.sin(p*Math.PI)}; if(b.t>=b.dur){b.realRun=null;b.dispatchRun=null;setState(b,'dock',.1);b.pos={...b.dock};} return; }
+  const elapsed=Math.max(0,(realState.actualMs-r.startMs)/1000), period=Math.max(1,(r.endMs||realState.actualMs+60000)-r.startMs)/4, phase=(elapsed/period)%1;
+  const inputs=b.role.inputs.length?b.role.inputs:[{src:SOURCES[0]?.id||'req',text:'运行记录'}]; const input=inputs[Math.min(inputs.length-1,Math.floor(elapsed/period)%inputs.length)];
+  b.src=cellBySrc[input.src]||sourceCells[0]; const path=route(b.dock,hoverPoint({...b,src:b.src}),b.i%2?1:-1); Object.assign(b,path); const local=phase;
+  if(local<.35){ b.state='out'; b.frac=local/.35; b.pos=bez(path.p0,path.c,path.p1,b.frac); b.heading=bezD(path.p0,path.c,path.p1,b.frac); }
+  else if(local<.65){ b.state='collect'; b.frac=1; b.pos=hoverPoint({...b,src:b.src}); b.heading=-Math.PI/2; }
+  else { b.state='back'; b.frac=1-(local-.65)/.35; b.pos=bez(path.p1,path.c,path.p0,(local-.65)/.35); b.heading=bezD(path.p1,path.c,path.p0,(local-.65)/.35); }
+}
+function realReplayStep(dt){
+  if(!REAL_EVENTS.length) return;
+  if(realState.play>realState.replayLength){ realState.play=0; resetReal(); }
+  realState.play+=dt*speed;
+  while(realState.eventIndex<REAL_EVENTS.length&&REAL_EVENTS[realState.eventIndex].playAt<=realState.play){ handleRealEvent(REAL_EVENTS[realState.eventIndex++]); }
+  const prev=REAL_EVENTS.findLast?.(e=>e.playAt<=realState.play)||REAL_EVENTS[0]; const next=REAL_EVENTS.find(e=>e.playAt>realState.play);
+  realState.actualMs=prev?prev.ms+(next?((realState.play-prev.playAt)/(next.playAt-prev.playAt))*(next.ms-prev.ms):0):REAL_EVENTS[0].ms;
+  for(const b of bees) updateRealBee(b);
+  for(const c of cells){ c.heat=Math.max(0,c.heat-dt*.8); c.flash=Math.max(0,c.flash-dt*1.6); }
+  renderRoster();
+}
+let realPanelMounted=false;
+function renderRealPanels(){
+  const live=realState.mode==='live', replay=realState.mode==='replay'; const serviceOpened=location.protocol==='http:'||location.protocol==='https:'; const stale=live&&serviceOpened&&liveHealth.dataCheckedAt&&Date.now()-liveHealth.dataCheckedAt>30000; $('mode-badge-text').textContent=live?'实时 · 最近事件 '+realClockText(REAL_EVENTS.at(-1)?.ms||Date.now())+' · 每 5 秒刷新'+(stale?' · 数据未刷新，请运行 python dispatch_server.py':''):replay?'真实运行记录 · 回放 '+(REAL_EVENTS.length?realClockText(REAL_EVENTS[0].ms)+'–'+realClockText(REAL_EVENTS.at(-1).ms):'无记录'):'调度为演示 · 岗位未实际运行';
+  $('sel-mode').value=realState.mode;
+  $('right-title').textContent=live||replay?'本次记录 · 岗位':'团队工作流'; $('right-subtitle').textContent=live||replay?'真实运行记录 · 点击查看':'最多 3 组并行 · 点击查看'; $('chart-title').textContent=live||replay?'运行时间线':'归集吞吐'; $('chart-note').textContent=live||replay?'每个岗位一行 · 空闲间隔按真实时间压缩':'近 60 秒 · 每秒归集包数（演示时钟）'; $('log-title').textContent=live||replay?'真实运行流水':'实时归集流水'; $('log-tag').textContent=live||replay?'飞行路线为岗位输入归类示意':'已归集 ≠ 已验收';
+  $('k-online-label').textContent=live||replay?'运行中岗位':'出勤工蜂（当前任务）'; $('k-collect-label').textContent=live||replay?'已完成运行':'采集中'; $('k-back-label').textContent=live||replay?'累计运行时长':'携蜜返巢'; $('k-total-label').textContent=live||replay?'涉及岗位数':'已归集输入包'; $('lib-note').textContent=live||replay?'运行起止时间来自 agent-audit.log；飞行路线按岗位输入归类示意。':'岗位、输入、工作流、协作关系与评测数量均读自岗位库；蜂群飞行与归集为调度演示，不代表岗位已执行或验收。输入按关键词归入 18 个资料蜂室。';
+  const summaries=roleRunSummary(); const sessions=[...new Set(REAL_EVENTS.map(e=>e.session))]; const first=REAL_EVENTS[0],last=REAL_EVENTS.at(-1); $('run-summary').innerHTML=live||replay?`<b>今日运行摘要</b> · 会话 ${sessions.length} · 首事件 ${first?realClockText(first.ms):'—'} · 末事件 ${last?realClockText(last.ms):'—'} · 岗位运行 ${summaries.reduce((n,x)=>n+x.runs.length,0)} 次`:'演示模式不显示真实运行摘要';
+  if(live||replay){
+    if(!realPanelMounted){ d3.select('#flows').selectAll('*').remove(); realPanelMounted=true; }
+    const roleSel=d3.select('#flows').selectAll('.role-record').data(summaries,x=>x.role.id).join(
+      enter=>{ const el=enter.append('div').attr('class','flow role-record').attr('data-role',x=>x.role.id).on('click',(e,x)=>openRole(x.role)); el.append('span').attr('class','fn'); el.append('span').attr('class','fs'); el.append('div').attr('class','bar').append('i'); return el; },
+      update=>update,
+      exit=>exit.remove());
+    roleSel.select('.fn').html(x=>`<code>${x.role.id}</code>${esc(x.role.name)} · ${x.runs.length} 次`);
+    roleSel.select('.fs').attr('class',x=>'fs '+(x.active?'run':'done')).text(x=>x.active?'运行中':'已完成 '+x.runs.length+' 次');
+    roleSel.select('.bar i').style('width',x=>(x.active?'35':'100')+'%');
+    const other=REAL_RUNS.filter(r=>!r.roleId); d3.select('#flows').selectAll('.other-record').data(other.length?[{count:other.length}]:[],x=>'other').join(
+      enter=>{ const el=enter.append('div').attr('class','flow other-record'); el.append('span').attr('class','fn').html('<code>other</code>非岗位 agent'); el.append('span').attr('class','fs done'); el.append('div').attr('class','bar').append('i').style('width','100%'); return el; },
+      update=>update,
+      exit=>exit.remove()).select('.fs').text(x=>x.count+' 次');
+  } else { d3.select('#flows').selectAll('*').remove(); realPanelMounted=false; }
+  if(live||replay){ const active=summaries.filter(x=>x.active).length; $('k-online').textContent=active; $('k-collect').textContent=realState.done; $('k-back').textContent=durationText(summaries.reduce((n,x)=>n+x.seconds,0)); $('k-total').textContent=summaries.length; }
+}
+let timelineX=null;
+function moveTimelineHead(){ const head=timelineX?timelineX(realState.actualMs):NaN; if(Number.isFinite(head)) d3.select('#timeline-head').attr('x1',head).attr('x2',head); }
+function renderRealTimeline(){
+  if(realState.mode==='demo') return;
+  csvg.selectAll('*').remove(); const rows=timelineRows(); const x0=150,x1=cw-8,y0=12,rowH=17; const min=REAL_RUNS.length?Math.min(...REAL_RUNS.map(r=>r.startMs)):Date.now(), max=REAL_RUNS.length?Math.max(...REAL_RUNS.map(r=>r.endMs||realState.actualMs)):min+1;
+  const points=[...new Set(REAL_RUNS.flatMap(r=>[r.startMs,r.endMs||realState.actualMs]).sort((a,b)=>a-b))]; const segments=[]; let totalMs=0;
+  for(let i=0;i<points.length-1;i++){ const a=points[i],b=points[i+1],active=REAL_RUNS.some(r=>r.startMs<=a&&(r.endMs||realState.actualMs)>=b); const real=b-a,shown=active?real:Math.min(real,600000); segments.push({a,b,start:totalMs,end:totalMs+shown,idle:!active&&real>600000}); totalMs+=shown; }
+  if(!segments.length) segments.push({a:min,b:max,start:0,end:1,idle:false});
+  const mapTime=ms=>{ const s=segments.find(x=>ms<=x.b)||segments.at(-1); const span=Math.max(1,s.b-s.a); return s.start+Math.max(0,Math.min(1,(ms-s.a)/span))*(s.end-s.start); }; const total=Math.max(1,totalMs); const x=ms=>x0+mapTime(ms)/total*(x1-x0); timelineX=x;
+  csvg.append('g').selectAll('text').data([min,max]).join('text').attr('x',d=>x(d)).attr('y',ch-3).attr('fill','#8fa6ad').attr('font-size',10).attr('text-anchor',d=>d===min?'start':'end').text(d=>realClockText(d));
+  segments.filter(s=>s.idle).forEach(s=>{ const mid=x0+(s.start+s.end)/total*(x1-x0); const mins=Math.round((s.b-s.a)/60000); const label=mins>=60?`≈${Math.floor(mins/60)} 小时 ${mins%60?mins%60+' 分':''}`:`≈${mins} 分`; csvg.append('line').attr('x1',x(s.a)).attr('x2',x(s.b)).attr('y1',ch-18).attr('y2',ch-18).attr('stroke','#5d747b').attr('stroke-dasharray','3,3'); csvg.append('text').attr('x',mid).attr('y',ch-20).attr('fill','#8fa6ad').attr('font-size',9).attr('text-anchor','middle').text(label); });
+  rows.forEach((item,i)=>{ const y=y0+i*rowH; csvg.append('text').attr('x',2).attr('y',y+9).attr('fill','#8fa6ad').attr('font-size',9).text(item.label); for(const r of item.runs){ const a=x(r.startMs),b=x(r.endMs||realState.actualMs); csvg.append('rect').attr('x',a).attr('y',y).attr('width',Math.max(4,b-a)).attr('height',9).attr('rx',2).attr('fill',r.roleId?'#f0c27b':'#8fa6ad'); }});
+  csvg.append('line').attr('id','timeline-head').attr('y1',4).attr('y2',ch-22).attr('stroke','#ffdca3').attr('stroke-width',1.5); moveTimelineHead();
+}
+
+let total=0,simTime=0,selectedRole=null;
+const buckets=new Array(60).fill(0); let bucketAcc=0,lastBucketSec=0;
+const SPEED=230,SLOT=[0,-1,1];
+function route(from,to,side){
+  const dx=to.x-from.x,dy=to.y-from.y,len=Math.hypot(dx,dy)||1,nx=-dy/len,ny=dx/len,b=side*len*rand(.18,.34);
+  return {p0:{...from},c:{x:(from.x+to.x)/2+nx*b,y:(from.y+to.y)/2+ny*b},p1:{...to},len:len*1.12};
+}
+const hoverPoint=b=>({x:b.src.x+SLOT[b.slot%3]*R*.26, y:b.src.y-R*.44});
+function setState(b,st,dur){ b.state=st; b.t=0; b.dur=dur; }
+
+function updateBee(b,dt){
+  b.t+=dt;
+  if(b.state==='dock'){ b.frac=0; b.pos={...b.dock}; b.heading=Math.atan2(b.dock.y-CY,b.dock.x-CX);
+    if(b.t>=b.dur && b.queue.length){
+      b.task=b.queue.shift(); b.src=cellBySrc[b.task.input.src]; b.slot=b.src.claims; b.src.claims++;
+      Object.assign(b,route(b.dock,hoverPoint(b),b.i%2?1:-1)); setState(b,'out',b.len/SPEED);
+    }
+  } else if(b.state==='out'||b.state==='back'){
+    const p=ease(Math.min(1,b.t/b.dur)); b.frac=b.state==='out'?p:1-p; b.pos=bez(b.p0,b.c,b.p1,p); b.heading=bezD(b.p0,b.c,b.p1,Math.min(.999,Math.max(.001,p)));
+    if(!reduced && Math.random()<dt*60) emit({type:'trail',x:b.pos.x+rand(-2,2),y:b.pos.y+rand(-2,2),vx:-Math.cos(b.heading)*20+rand(-6,6),vy:-Math.sin(b.heading)*20+rand(-6,6),life:rand(.5,.9),gold:b.state==='back',size:rand(1,2.2)});
+    for(const r of relay){ if(Math.abs(r.x-b.pos.x)<R*.8 && Math.abs(r.y-b.pos.y)<R*.8) r.heat=Math.min(1,r.heat+dt*3); }
+    if(b.t>=b.dur){ if(b.state==='out'){ setState(b,'collect',rand(1.2,2.2)); b.src.heat=1; } else setState(b,'drop',.35); }
+  } else if(b.state==='collect'){
+    b.frac=1; const hp=hoverPoint(b); b.pos={x:hp.x+Math.sin(simTime*3+b.i)*4,y:hp.y+Math.cos(simTime*4+b.i)*2}; b.heading=-Math.PI/2;
+    b.src.heat=Math.min(1,b.src.heat+dt);
+    if(!reduced && Math.random()<dt*9){ const a=rand(0,Math.PI*2),d=rand(R*.2,R*.5); emit({type:'drop',x:b.src.x+Math.cos(a)*d,y:b.src.y+Math.sin(a)*d*.6+R*.15,tx:b,life:rand(.6,1),size:rand(1.8,3)}); }
+    if(b.t>=b.dur){ b.src.claims--; b.src.count++; b.src.flash=1; b.packet=b.task;
+      Object.assign(b,route(b.pos,b.dock,b.i%2?-1:1)); setState(b,'back',b.len/SPEED); }
+  } else if(b.state==='drop'){
+    b.frac=0; const p=b.t/b.dur, k=.35*Math.sin(p*Math.PI); b.pos={x:b.dock.x+(CX-b.dock.x)*k,y:b.dock.y+(CY-b.dock.y)*k};
+    if(b.t>=b.dur){ deposit(b); setState(b,'dock',rand(.3,1.2)); }
+  }
+}
+
+/* ---------- 团队工作流调度 ---------- */
+const MAXRUN=3;
+const flowState=Object.fromEntries(FLOWS.map(f=>[f.id,{rounds:0,run:null,queued:false}]));
+const runs=[]; let nextFlow=0,startCooldown=0;
+const pending=[];   // 用户手动派工的工作流
+function startRun(flow){
+  const st=flowState[flow.id]; if(st.run) return;
+  const run={flow,done:0,total:0,round:st.rounds+1};
+  for(const id of flow.roles){ const b=beeById[id]; if(!b) continue;
+    for(const input of b.role.inputs){ b.queue.push({run,input}); run.total++; } }
+  if(!run.total) return;
+  st.run=run; runs.push(run);
+  addLog({done:true,html:`<div class="l1"><span><b>▶ ${esc(flow.name)}</b> 开始第 ${run.round} 轮派工</span><span class="t num">${now()}</span></div><div class="l2">${flow.roles.length} 个岗位 · ${run.total} 条输入 · ${esc(flow.sequence)}</div>`});
+  renderFlows();
+}
+function scheduler(dt){
+  startCooldown-=dt;
+  if(runs.length>=MAXRUN||startCooldown>0) return;
+  let flow=null;
+  while(pending.length && !flow){ const f=pending.shift(); flowState[f.id].queued=false; if(!flowState[f.id].run) flow=f; }
+  for(let k=0;k<FLOWS.length && !flow;k++){ const f=FLOWS[nextFlow%FLOWS.length]; nextFlow++; if(!flowState[f.id].run) flow=f; }
+  if(flow){ startRun(flow); startCooldown=2.5; }
+}
+function finishRun(run){
+  const st=flowState[run.flow.id]; st.rounds++; st.run=null; runs.splice(runs.indexOf(run),1);
+  addLog({done:true,html:`<div class="l1"><span><b>✓ ${esc(run.flow.name)}</b> 第 ${run.round} 轮归集完成</span><span class="tag">待核验</span></div><div class="l2">产出：${esc(run.flow.outputs||'—')}</div>`});
+  renderFlows();
+}
+
+function deposit(b){
+  const task=b.packet; b.packet=null; if(!task||!task.input){ b.task=null; setState(b,'dock',rand(.3,1.2)); return; } b.task=null; b.trips++; total++; bucketAcc++; center.flash=1;
+  if(!reduced) for(let k=0;k<16;k++){ const a=rand(0,Math.PI*2),v=rand(30,110); emit({type:'spark',x:CX,y:CY,vx:Math.cos(a)*v,vy:Math.sin(a)*v,life:rand(.4,.9),gold:true,size:rand(1.2,2.6)}); }
+  emit({type:'feed',x:CX,y:CY,tx:storage[total%storage.length],life:1,size:3.2});
+  const src=cellBySrc[task.input.src];
+  addLog({html:`<div class="l1"><span><b>${esc(b.role.id)}</b> ${esc(b.role.name)} ← ${esc(src.name)}</span><span class="t num">${now()}</span></div><div class="l2">${esc(task.input.text)} · ${esc(task.run.flow.name)}</div>`});
+  task.run.done++; if(task.run.done>=task.run.total) finishRun(task.run);
+}
+
+/* ---------- 粒子 ---------- */
+const parts=[],MAXP=1600;
+function emit(p){ if(parts.length<MAXP){ p.age=0; p.max=p.life; parts.push(p); } }
+const motes=d3.range(70).map(()=>({x:rand(0,HW),y:rand(0,HH),vx:rand(-4,4),vy:rand(-8,-2),r:rand(.6,1.6),a:rand(.1,.35)}));
+function updateParts(dt){
+  for(let i=parts.length-1;i>=0;i--){ const p=parts[i]; p.age+=dt; p.life-=dt;
+    if(p.type==='drop'){ const t=p.tx.pos; p.x+=(t.x-p.x)*Math.min(1,dt*4); p.y+=(t.y-p.y)*Math.min(1,dt*4); }
+    else if(p.type==='feed'){ const k=ease(Math.min(1,p.age/p.max)),t=p.tx; p.x=CX+(t.x-CX)*k; p.y=CY+(t.y-CY)*k;
+      if(p.life<=0){ t.fill+=rand(4,8); t.flash=1; if(t.fill>=100){ t.fill=0; t.sealed++; } } }
+    else { p.x+=p.vx*dt; p.y+=p.vy*dt; p.vx*=.96; p.vy*=.96; }
+    if(p.life<=0) parts.splice(i,1);
+  }
+  if(!reduced) for(const m of motes){ m.x+=m.vx*dt; m.y+=m.vy*dt; if(m.y<-4){m.y=HH+4;m.x=rand(0,HW);} if(m.x<-4)m.x=HW+4; if(m.x>HW+4)m.x=-4; }
+}
+
+/* ---------- 绘制 ---------- */
+function drawBee(b){
+  const sel=selectedRole===b.role;
+  if(b.state==='dock'){ ctx.fillStyle=sel?C.blue:b.queue.length?'rgba(159,211,234,.75)':'rgba(240,194,123,.4)'; ctx.beginPath(); ctx.arc(b.pos.x,b.pos.y,sel?3.4:b.queue.length?2.4:1.8,0,7); ctx.fill(); return; }
+  const flap=reduced?1:.75+Math.sin(simTime*38+b.i)*.25, g=ctx;
+  g.save(); g.translate(b.pos.x,b.pos.y);
+  g.globalCompositeOperation='lighter'; g.globalAlpha=.55; g.drawImage((b.state==='back'||b.state==='drop')?GLOW_AMBER:GLOW_BLUE,-26,-26,52,52); g.globalAlpha=1; g.globalCompositeOperation='source-over';
+  if(sel){ g.strokeStyle=C.blue; g.lineWidth=1.5; g.setLineDash([3,3]); g.beginPath(); g.arc(0,0,20,0,7); g.stroke(); g.setLineDash([]); }
+  g.rotate(b.heading+Math.PI/2); g.scale(.72,.72); g.lineCap='round'; g.lineJoin='round';
+  g.fillStyle='rgba(159,211,234,.32)'; g.strokeStyle=C.blue; g.lineWidth=1;
+  for(const sg of [-1,1]){ g.beginPath(); g.ellipse(sg*10,-3,8.4*flap,12.5,sg*.6,0,Math.PI*2); g.fill(); g.stroke(); }
+  g.strokeStyle=C.metal; g.lineWidth=1.4;
+  for(const sg of [-1,1]) for(const y of [-3,3,9]){ g.beginPath(); g.moveTo(sg*5,y); g.lineTo(sg*10,y+3); g.lineTo(sg*13,y+1); g.stroke(); }
+  g.fillStyle=C.body; g.strokeStyle=gcolor(b.role.group); g.lineWidth=1.6;
+  g.beginPath(); g.moveTo(-6,-7); g.lineTo(6,-7); g.lineTo(8,5); g.lineTo(4,14); g.lineTo(-4,14); g.lineTo(-8,5); g.closePath(); g.fill(); g.stroke();
+  g.fillStyle=gcolor(b.role.group); g.fillRect(-6,-1,12,3); g.fillRect(-5,6,10,3);
+  g.fillStyle='#405560'; g.strokeStyle=C.metal; g.beginPath(); g.arc(0,-11,6.3,0,Math.PI*2); g.fill(); g.stroke();
+  g.fillStyle=C.blue; g.fillRect(-4.5,-13,3,2.5); g.fillRect(1.5,-13,3,2.5);
+  g.strokeStyle=C.metal; g.beginPath(); g.moveTo(-3,-16); g.lineTo(-6,-21); g.moveTo(3,-16); g.lineTo(6,-21); g.stroke();
+  if(b.state==='back'||b.state==='drop'){ g.fillStyle=C.amber2; g.beginPath(); g.moveTo(0,15); g.bezierCurveTo(-9,23,-4,29,0,29); g.bezierCurveTo(6,29,9,23,0,15); g.fill(); }
+  g.restore();
+  if(b.state!=='collect'){ ctx.font='10px Consolas,monospace'; ctx.textAlign='center'; ctx.fillStyle='rgba(238,240,234,.8)'; ctx.fillText(num(b.role.id),b.pos.x,b.pos.y+22); }
+}
+
+function draw(frameDt=0){
+  ctx.setTransform(K,0,0,K,0,0); ctx.clearRect(0,0,HW,HH);
+  ctx.drawImage(staticLayer,0,0,HW,HH);
+  if(!reduced){ ctx.fillStyle=C.blue; for(const m of motes){ ctx.globalAlpha=m.a; ctx.beginPath(); ctx.arc(m.x,m.y,m.r,0,7); ctx.fill(); } ctx.globalAlpha=1; }
+  ctx.lineWidth=1;
+  for(const b of bees){ if(b.state==='out'||b.state==='back'){ ctx.strokeStyle=b.state==='back'?'rgba(240,194,123,.16)':'rgba(159,211,234,.13)'; ctx.setLineDash([2,6]); ctx.beginPath(); ctx.moveTo(b.p0.x,b.p0.y); ctx.quadraticCurveTo(b.c.x,b.c.y,b.p1.x,b.p1.y); ctx.stroke(); } }
+  ctx.setLineDash([]);
+  // 选中岗位：高亮它的输入来源蜂室
+  const selSrc=selectedRole?new Set(selectedRole.inputs.map(i=>i.src)):null;
+  for(const r of relay){ if(r.heat>.01){ ctx.strokeStyle=`rgba(159,211,234,${r.heat*.55})`; ctx.lineWidth=1.4; ctx.stroke(r.path); ctx.fillStyle=`rgba(159,211,234,${r.heat*.07})`; ctx.fill(r.path); } }
+  const pulse=.5+.5*Math.sin(simTime*4);
+  for(const s of sourceCells){
+    if(s.claims>0||s.heat>.01){ const h=Math.max(s.heat,s.claims?.6:0);
+      ctx.fillStyle=`rgba(159,211,234,${.06+h*.12+(s.claims?pulse*.05:0)})`; ctx.fill(s.path);
+      ctx.strokeStyle=`rgba(159,211,234,${.35+h*.5})`; ctx.lineWidth=1.6; ctx.stroke(s.path); }
+    if(selSrc&&selSrc.has(s.id)){ ctx.strokeStyle=C.amber2; ctx.lineWidth=2; ctx.setLineDash([5,4]); ctx.stroke(s.inner); ctx.setLineDash([]); }
+    if(s.flash>.01){ ctx.strokeStyle=`rgba(240,194,123,${s.flash})`; ctx.lineWidth=2; ctx.stroke(s.inner); }
+    ctx.textAlign='center'; ctx.fillStyle=s.claims?C.blue2:C.ink; ctx.font='500 14px "Microsoft YaHei",sans-serif'; ctx.fillText(s.short,s.x,s.y+10);
+    ctx.font='12px Bahnschrift,"Segoe UI",sans-serif'; ctx.fillStyle=s.count?C.amber:C.muted;
+    ctx.fillText(realState.mode==='demo'?(s.count?s.count+' 包':s.inputs+' 条输入'):s.inputs+' 条输入',s.x,s.y+28);
+  }
+  for(const st of storage){
+    ctx.save(); ctx.clip(st.inner);
+    const top=st.y+(R-9)-(st.fill/100)*(2*(R-9));
+    const gr=ctx.createLinearGradient(0,top,0,st.y+R); gr.addColorStop(0,'rgba(255,220,163,.55)'); gr.addColorStop(1,'rgba(240,194,123,.18)');
+    ctx.fillStyle=gr; ctx.beginPath(); ctx.moveTo(st.x-R,st.y+R);
+    for(let x=-R;x<=R;x+=6) ctx.lineTo(st.x+x,top+Math.sin(x/9+simTime*2.2)*(reduced?0:2));
+    ctx.lineTo(st.x+R,st.y+R); ctx.closePath(); ctx.fill(); ctx.restore();
+    if(st.flash>.01){ ctx.strokeStyle=`rgba(255,220,163,${st.flash*.8})`; ctx.lineWidth=2; ctx.stroke(st.path); }
+    ctx.textAlign='center'; ctx.fillStyle=C.amber2; ctx.font='12px "Microsoft YaHei",sans-serif'; ctx.fillText('储蜜 '+st.name.slice(-2),st.x,st.y-4);
+    ctx.font='13px Bahnschrift,"Segoe UI",sans-serif'; ctx.fillStyle=C.ink; ctx.fillText(Math.floor(st.fill)+'%'+(st.sealed?' · 封'+st.sealed:''),st.x,st.y+14);
+  }
+  ctx.globalCompositeOperation='lighter'; ctx.globalAlpha=.35+center.flash*.5; ctx.drawImage(GLOW_AMBER,CX-R*1.6,CY-R*1.6,R*3.2,R*3.2); ctx.globalAlpha=1; ctx.globalCompositeOperation='source-over';
+  ctx.strokeStyle=`rgba(255,220,163,${.5+center.flash*.5})`; ctx.lineWidth=2+center.flash*2; ctx.stroke(center.path);
+  if(center.flash>.02 && !reduced){ ctx.strokeStyle=`rgba(240,194,123,${center.flash*.6})`; ctx.lineWidth=1.5; ctx.beginPath(); ctx.arc(CX,CY,R*(.4+(1-center.flash)*1.1),0,7); ctx.stroke(); }
+  ctx.globalCompositeOperation='lighter';
+  for(const p of parts){ const a=Math.max(0,p.life/p.max), spr=(p.type==='trail'&&!p.gold)?GLOW_BLUE:GLOW_AMBER, sz=p.size*(p.type==='feed'?5:4);
+    ctx.globalAlpha=p.type==='feed'?.95:a*.9; ctx.drawImage(spr,p.x-sz,p.y-sz,sz*2,sz*2); }
+  ctx.globalAlpha=1; ctx.globalCompositeOperation='source-over';
+  for(const b of bees) if(b.state==='dock') drawBee(b);
+  ctx.textAlign='center'; ctx.fillStyle=C.amber; ctx.font='500 15px "Microsoft YaHei",sans-serif'; ctx.fillText('中心归集仓',CX,CY-6);
+  ctx.font='600 22px Bahnschrift,"Segoe UI",sans-serif'; ctx.fillStyle=C.amber2; ctx.fillText((realState.mode==='demo'?total:realState.done).toLocaleString(),CX,CY+18);
+  for(const b of bees) if(b.state!=='dock') drawBee(b);
+}
+
+/* ---------- 左侧：岗位库指标 + 49 岗六边形目录 ---------- */
+const c0=META.counts;
+$('subtitle').textContent=(META.release||'AGENT LIBRARY')+' · 上游 '+String(META.sourceHead||'').slice(0,7)+' · 核对 '+(META.checkedAt||'—');
+$('lib-meta').textContent='数据生成 '+(META.generatedAt||META.builtAt||'—');
+$('k-roles').textContent=c0.roles; $('k-groups').textContent=c0.groups; $('k-flows').textContent=c0.workflows; $('k-collab').textContent=c0.collaboration;
+$('k-evals').innerHTML=c0.evalsRun+'<em>/ '+c0.evals+'</em>';
+$('lib-note').textContent='岗位、输入、工作流、协作关系与评测数量均读自岗位库；蜂群飞行与归集为调度演示，不代表岗位已执行或验收。输入按关键词归入 18 个资料蜂室。';
+d3.select('#glegend').selectAll('span').data(GROUPS).join('span').html(g=>`<i style="background:${gcolor(g)}"></i>${esc(g)} ${ROLES.filter(r=>r.group===g).length}`);
+
+const rs=d3.select('#roster-svg'), rr=26, cols=7, rows=Math.ceil(ROLES.length/cols);
+const gridW=(cols-1)*rr*SQ3+rr*SQ3/2, gridH=(rows-1)*rr*1.5;
+rs.attr('height',Math.ceil(gridH+rr*2+4));
+const rosterNodes=ROLES.map((r,i)=>{ const row=Math.floor(i/cols),col=i%cols; return {r,x:(360-gridW)/2+col*rr*SQ3+(row%2?rr*SQ3/2:0),y:rr+2+row*rr*1.5}; });
+const rhex=rs.selectAll('g').data(rosterNodes).join('g').attr('class','rhex').attr('transform',d=>`translate(${d.x},${d.y})`);
+rhex.append('path').attr('class','rh').attr('d',hexLine(hexPts(0,0,rr-2))+'Z');
+rhex.append('text').attr('text-anchor','middle').attr('dy','.35em').attr('font-size',14).attr('font-family','Bahnschrift,Segoe UI,sans-serif').text(d=>num(d.r.id));
+rhex.on('click',(e,d)=>openRole(d.r)).on('mousemove',(e,d)=>showTip(e,roleTip(d.r))).on('mouseleave',hideTip);
+function renderRoster(){
+  if(realState.mode!=='demo'){
+    const active=new Set(REAL_RUNS.filter(r=>r.roleId&&(!r.endMs||r.endMs>realState.actualMs)).map(r=>r.roleId));
+    const seen=new Set(REAL_RUNS.filter(r=>r.roleId&&r.startMs<=realState.actualMs).map(r=>r.roleId));
+    rhex.select('.rh').attr('fill',d=>active.has(d.r.id)?'rgba(159,211,234,.34)':seen.has(d.r.id)?'rgba(240,194,123,.22)':'rgba(10,20,25,.7)').attr('stroke',d=>selectedRole===d.r?'#ffffff':seen.has(d.r.id)?C.amber:gcolor(d.r.group)).attr('stroke-width',d=>selectedRole===d.r?2:1.2).attr('stroke-opacity',d=>selectedRole===d.r||seen.has(d.r.id)?1:.38);
+    rhex.select('text').attr('fill',d=>active.has(d.r.id)?'#ffffff':seen.has(d.r.id)?C.amber:'#5d747b'); return;
+  }
+  rhex.select('.rh')
+    .attr('fill',d=>{ const b=beeById[d.r.id]; return b.state!=='dock'?(b.state==='back'||b.state==='drop'?'rgba(240,194,123,.35)':'rgba(159,211,234,.3)'):b.queue.length?'rgba(159,211,234,.12)':'rgba(10,20,25,.7)'; })
+    .attr('stroke',d=>selectedRole===d.r?'#ffffff':gcolor(d.r.group)).attr('stroke-width',d=>selectedRole===d.r?2:1.2)
+    .attr('stroke-opacity',d=>{ const b=beeById[d.r.id]; return selectedRole===d.r||b.state!=='dock'||b.queue.length?1:.45; });
+  rhex.select('text').attr('fill',d=>beeById[d.r.id].state!=='dock'?'#ffffff':'#8fa6ad');
+}
+
+/* ---------- 右侧：工作流 + 流水 ---------- */
+let flowSel;
+function mountFlowSel(){ flowSel=d3.select('#flows').selectAll('.flow').data(FLOWS).join('div').attr('class','flow')
+  .html(f=>`<span class="fn"><code>${esc(f.id)}</code>${esc(f.name)} · ${f.roles.length} 岗</span><span class="fs queue">待派工</span><div class="bar"><i></i></div>`)
+  .on('click',(e,f)=>openFlow(f)); }
+function renderFlows(){
+  if(realState.mode!=='demo') return;
+  if(!flowSel||$('flows').children.length!==FLOWS.length) mountFlowSel();
+  flowSel.classed('active',f=>!!flowState[f.id].run);
+  flowSel.select('.fs').attr('class',f=>'fs '+(flowState[f.id].run?'run':flowState[f.id].rounds?'done':'queue'))
+    .text(f=>{ const s=flowState[f.id]; return s.run?`采集中 ${s.run.done}/${s.run.total}`:s.queued?'已插队':s.rounds?`已完成 ${s.rounds} 轮`:'待派工'; });
+  flowSel.select('.bar i').style('width',f=>{ const s=flowState[f.id]; return s.run?(s.run.done/s.run.total*100)+'%':s.rounds?'100%':'0%'; });
+}
+const logEl=$('log'),styleLogEl=$('style-log'),now=()=>new Date().toTimeString().slice(0,8);
+function addLog({html,done}){ for(const target of [logEl,styleLogEl]){ const row=document.createElement('div'); row.className='log-row'+(done?' done':''); row.innerHTML=html; target.prepend(row); while(target.children.length>7) target.lastChild.remove(); } }
+
+/* ---------- 吞吐图 ---------- */
+const csvg=d3.select('#chart-svg'),cw=968,ch=112,m={l:30,r:6,t:8,b:20};
+const xs=d3.scaleLinear().domain([0,59]).range([m.l,cw-m.r]),ys=d3.scaleLinear().range([ch-m.b,m.t]);
+const lg=csvg.append('defs').append('linearGradient').attr('id','ga').attr('x1',0).attr('x2',0).attr('y1',0).attr('y2',1);
+lg.append('stop').attr('offset','0%').attr('stop-color','#f0c27b').attr('stop-opacity',.45); lg.append('stop').attr('offset','100%').attr('stop-color','#9fd3ea').attr('stop-opacity',0);
+const gy=csvg.append('g').attr('transform',`translate(${m.l},0)`),areaP=csvg.append('path').attr('fill','url(#ga)'),lineP=csvg.append('path').attr('fill','none').attr('stroke','#f0c27b').attr('stroke-width',1.6).style('filter','drop-shadow(0 0 4px rgba(240,194,123,.6))');
+csvg.append('g').attr('transform',`translate(0,${ch-m.b})`).call(d3.axisBottom(xs).tickValues([0,15,30,45,59]).tickFormat(d=>d===59?'现在':`-${59-d}s`)).call(g=>{g.select('.domain').attr('stroke','#26404a');g.selectAll('text').attr('fill','#8fa6ad').attr('font-size',11);g.selectAll('line').attr('stroke','#26404a');});
+function renderChart(){
+  ys.domain([0,Math.max(4,d3.max(buckets))]).nice();
+  gy.call(d3.axisLeft(ys).ticks(3).tickSize(-(cw-m.l-m.r))).call(g=>{g.select('.domain').remove();g.selectAll('line').attr('stroke','rgba(80,120,135,.2)');g.selectAll('text').attr('fill','#8fa6ad').attr('font-size',11);});
+  areaP.attr('d',d3.area().x((d,i)=>xs(i)).y0(ch-m.b).y1(d=>ys(d)).curve(d3.curveMonotoneX)(buckets));
+  lineP.attr('d',d3.line().x((d,i)=>xs(i)).y(d=>ys(d)).curve(d3.curveMonotoneX)(buckets));
+}
+function renderKpis(){
+  $('k-online').textContent=bees.filter(b=>b.state!=='dock'||b.queue.length).length;
+  $('k-collect').textContent=bees.filter(b=>b.state==='collect').length;
+  $('k-back').textContent=bees.filter(b=>b.state==='back'||b.state==='drop').length;
+  $('k-total').textContent=total.toLocaleString();
+}
+
+/* ---------- 详情面板 ---------- */
+const modal=$('modal');
+function closeModal(){ modal.classList.remove('open'); selectedRole=null; renderRoster(); }
+addEventListener('keydown',e=>{ if(e.key==='Escape') closeModal(); });
+function openRole(r){
+  selectedRole=r; renderRoster(); const b=beeById[r.id];
+  const collab=r.collaboration.map(c=>{ const t=roleBySlug[c.to]; return t?`<span class="chip" data-role="${t.id}" title="${esc(c.purpose)}">${DIR[c.dir]||c.dir} · ${esc(t.name)}</span>`:''; }).join('');
+  const flows=FLOWS.filter(f=>f.roles.includes(r.id)).map(f=>`<span class="chip" data-flow="${f.id}">${esc(f.name)}</span>`).join('')||'<span style="color:#8fa6ad">未出现在 9 个团队工作流中</span>';
+  const realRecords=realState.mode==='demo'?'':`<h5>真实运行记录</h5><ul>${REAL_RUNS.filter(x=>x.roleId===r.id).map(x=>`<li>${realClockText(x.startMs)}–${x.endMs?realClockText(x.endMs):'运行中'} · ${x.endMs?durationText(realDuration(x)):'运行中'} · 会话 ${esc(x.session.slice(0,8))}</li>`).join('')||'<li>暂无真实记录</li>'}</ul><h5>产出文件</h5><ul>${(RUN_DATA.artifacts?.[r.slug]||[]).map(a=>`<li>${esc(a.path)} · ${esc(a.mtime)} · ${esc(a.title||'无标题')}</li>`).join('')||'<li>暂无记录</li>'}</ul>`;
+  modal.innerHTML=`<button class="x" aria-label="关闭">✕</button>
+    <div class="eyebrow">${esc(r.id)} · ${esc(r.slug)}</div><h3>${esc(r.name)}</h3>
+    <dl class="kv"><dt>分组</dt><dd><span style="color:${gcolor(r.group)}">■</span> ${esc(r.group)} · ${esc(r.tier||'')}</dd>
+    <dt>上游标注</dt><dd>model ${esc(r.model||'—')} · ${esc(r.tools||'—')}</dd>
+    <dt>运行状态</dt><dd>${r.execution==='not_run'?'未执行':esc(r.execution)} · 评测 ${r.evals.run}/${r.evals.total} 已执行</dd>
+    <dt>本次演示</dt><dd>${b.state==='dock'?(b.queue.length?`排队中，待采集 ${b.queue.length} 条`:'停靠'):'正在'+({out:'出巢',collect:'采集',back:'返巢',drop:'入仓'}[b.state])+'：'+esc(b.task?.input.text||'')} · 已往返 ${b.trips} 次</dd></dl>
+    <h5>岗位目标</h5><p>${esc(r.goal)}</p>
+    <h5>输入（蜂群采集的“花蜜”）</h5><ul>${r.inputs.map(i=>`<li>${esc(i.text)}<span class="src">${esc(cellBySrc[i.src].name)}</span></li>`).join('')}</ul>
+    <h5>交付物</h5><ul>${r.deliverables.map(d=>`<li>${esc(d)}</li>`).join('')}</ul>
+    <h5>边界</h5><ul>${r.boundaries.map(d=>`<li>${esc(d)}</li>`).join('')}</ul>
+    <h5>所属团队工作流</h5><div class="chips">${flows}</div>
+    <h5>协作关系（${r.collaboration.length}）</h5><div class="chips">${collab}</div>
+    ${realRecords}<button class="go" data-dispatch-role="${esc(r.id)}">派发给此岗位</button>${r.sourceUrl?`<p style="margin-top:12px"><a href="${esc(r.sourceUrl)}" target="_blank" rel="noopener noreferrer">查看上游岗位原文 ↗</a></p>`:''}`;
+  modal.classList.add('open'); modal.scrollTop=0;
+}
+function openFlow(f){
+  selectedRole=null; renderRoster(); const s=flowState[f.id];
+  modal.innerHTML=`<button class="x" aria-label="关闭">✕</button>
+    <div class="eyebrow">${esc(f.id)} · ${esc(f.slug)}</div><h3>${esc(f.name)}</h3>
+    <dl class="kv"><dt>时序</dt><dd>${esc(f.sequence)}</dd><dt>产出</dt><dd>${esc(f.outputs)}</dd><dt>条件</dt><dd>${esc(f.conditions||'—')}</dd>
+    <dt>本次演示</dt><dd>${s.run?`采集中 ${s.run.done}/${s.run.total}`:s.rounds?`已完成 ${s.rounds} 轮`:'尚未派工'}</dd></dl>
+    <h5>参与岗位（${f.roles.length}）</h5><div class="chips">${f.roles.map(id=>roleById[id]?`<span class="chip" data-role="${id}">${esc(id)} ${esc(roleById[id].name)}</span>`:'').join('')}</div>
+    <div class="warn">岗位库标注：${f.status==='source_reference_only_not_executed'?'仅作原文参考，未执行':esc(f.status)}。这里的派工只是蜂群调度演示。</div>
+    ${s.run?'':s.queued?'<button class="go" disabled style="opacity:.6">已插队，等待空位</button>':`<button class="go" data-go="${f.id}">优先派工（演示）</button>`}`;
+  modal.classList.add('open'); modal.scrollTop=0;
+}
+function openCell(c){
+  selectedRole=null; renderRoster();
+  const items=ROLES.flatMap(r=>r.inputs.filter(i=>i.src===c.id).map(i=>({r,i})));
+  const realCell=realState.mode==='demo'?`${c.count} 包 · 正在采集 ${c.claims} 只`:'飞行路线按岗位输入归类示意';
+  modal.innerHTML=`<button class="x" aria-label="关闭">✕</button>
+    <div class="eyebrow">资料蜂室 · ${esc(c.id)}</div><h3>${esc(c.name)}</h3>
+    <dl class="kv"><dt>映射输入</dt><dd>${items.length} 条，来自 ${c.roles.length} 个岗位</dd><dt>${realState.mode==='demo'?'本次已采':'真实记录'}</dt><dd>${realCell}</dd></dl>
+    <h5>归入本蜂室的岗位输入</h5><ul>${items.map(({r,i})=>`<li><span class="chip" data-role="${r.id}">${esc(r.id)} ${esc(r.name)}</span> ${esc(i.text)}</li>`).join('')}</ul>
+    <div class="warn">按关键词自动归类，可在 build_data.py 的 SOURCES 里调整后重新生成。</div>`;
+  modal.classList.add('open'); modal.scrollTop=0;
+}
+modal.addEventListener('click',e=>{
+  const t=e.target.closest('[data-role],[data-flow],[data-go],[data-dispatch-role],.x'); if(!t) return;
+  if(t.classList.contains('x')) return closeModal();
+  if(t.dataset.role) return openRole(roleById[t.dataset.role]);
+  if(t.dataset.dispatchRole) return openDispatch(roleById[t.dataset.dispatchRole]);
+  if(t.dataset.flow) return openFlow(FLOWS.find(f=>f.id===t.dataset.flow));
+  if(t.dataset.go){ const f=FLOWS.find(x=>x.id===t.dataset.go); if(!flowState[f.id].run&&!flowState[f.id].queued){ pending.push(f); flowState[f.id].queued=true; startCooldown=Math.min(startCooldown,0); renderFlows(); } openFlow(f); }
+});
+
+/* ---------- 悬停提示 ---------- */
+const tip=$('tip');
+function roleTip(r){ const b=beeById[r.id]; return `<h4>${esc(r.id)} · ${esc(r.name)}</h4><span>${esc(r.group)}</span><br>${b.state==='dock'?(b.queue.length?'排队 '+b.queue.length+' 条':'停靠'):'正在'+({out:'出巢',collect:'采集',back:'返巢',drop:'入仓'}[b.state])+' · '+esc(b.src?.name||'')}`; }
+function showTip(e,html){ tip.innerHTML=html; tip.style.opacity=1; const sr=stage.getBoundingClientRect(); let x=(e.clientX-sr.left)/scale+16,y=(e.clientY-sr.top)/scale+16; if(x>W-360)x-=376; tip.style.left=x+'px'; tip.style.top=y+'px'; }
+function hideTip(){ tip.style.opacity=0; }
+function toLocal(e){ const r=canvas.getBoundingClientRect(); return {x:(e.clientX-r.left)/r.width*HW, y:(e.clientY-r.top)/r.height*HH}; }
+function hitBee(p){ return bees.find(b=>Math.hypot(b.pos.x-p.x,b.pos.y-p.y)<(b.state==='dock'?6:18)); }
+canvas.addEventListener('mousemove',e=>{
+  const p=toLocal(e), bee=hitBee(p);
+  if(bee){ const t=bee.task; return showTip(e,roleTip(bee.role)+(t?`<br><span>输入</span> ${esc(t.input.text)}<br><span>工作流</span> ${esc(t.run.flow.name)}`:'')); }
+  const c=cells.find(c=>Math.hypot(c.x-p.x,c.y-p.y)<R*.86);
+  if(!c) return hideTip();
+  if(c.kind==='source') showTip(e,`<h4>${esc(c.name)}</h4><span>映射输入</span> ${c.inputs} 条 · ${c.roles.length} 个岗位<br><span>本次已采</span> ${c.count} 包 · 采集中 ${c.claims}<br><span>点击查看明细</span>`);
+  else if(c.kind==='storage') showTip(e,`<h4>${esc(c.name)}</h4><span>液位</span> ${Math.floor(c.fill)}% · 已封存 ${c.sealed} 批`);
+  else if(c.kind==='center') showTip(e,`<h4>中心归集仓</h4><span>已归集</span> ${total} 包输入<br><span style="color:#f0c27b">已归集 ≠ 已验收</span>`);
+  else showTip(e,'<h4>中转蜂室</h4><span>工蜂经过时亮起</span>');
+});
+canvas.addEventListener('mouseleave',hideTip);
+canvas.addEventListener('click',e=>{ const p=toLocal(e), b=hitBee(p); if(b) return openRole(b.role);
+  const c=sourceCells.find(c=>Math.hypot(c.x-p.x,c.y-p.y)<R*.86); if(c) return openCell(c); closeModal(); });
+
+/* ---------- 控制与主循环 ---------- */
+let playing=true,speed=1,reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
+$('chk-reduce').checked=reduced;
+$('btn-play').onclick=()=>{ playing=!playing; $('btn-play').textContent=playing?'暂停':'继续'; };
+$('sel-speed').onchange=e=>speed=+e.target.value;
+$('chk-reduce').onchange=e=>{ reduced=e.target.checked; if(reduced) parts.length=0; };
+$('sel-style').innerHTML='<option value="hive">蜂巢</option>'+STYLE_PACK.STYLES.map(s=>`<option value="${s.id}">${esc(s.name)}</option>`).join('');
+setVisualStyle(visualStyle,false);
+$('sel-style').onchange=e=>setVisualStyle(e.target.value);
+$('chk-rotate').checked=rotateStyle;
+$('chk-rotate').onchange=e=>{ rotateStyle=e.target.checked; try{localStorage.setItem('ccgs-style-rotate',rotateStyle?'1':'0')}catch(_){ } };
+addEventListener('keydown',e=>{ if(e.target.tagName==='INPUT'||e.target.tagName==='TEXTAREA'||e.target.tagName==='SELECT') return; const n=+e.key; if(n>=1&&n<=8) setVisualStyle(STYLE_IDS[n-1]); });
+setInterval(()=>{ if(rotateStyle&&!$('dispatch-drawer').classList.contains('open')) nextVisualStyle(); },30000);
+function setMode(mode){
+  realState.mode=mode;
+  try{localStorage.setItem('ccgs-mode',mode)}catch(_){ }
+  if(mode==='demo'){ $('sel-mode').value='demo'; pack.reset(); for(const b of bees){ b.realRun=null; b.realDone=false; b.queue=[]; b.task=null; b.packet=null; b.src=null; b.frac=0; setState(b,'dock',.1); b.pos={...b.dock}; } for(const s of sourceCells){s.claims=0;s.count=0;s.heat=0;s.flash=0;} total=0;simTime=0;for(const s of Object.values(flowState)){s.rounds=0;s.run=null;s.queued=false;}runs.length=0; renderRealPanels(); mountFlowSel(); renderFlows(); renderKpis(); renderRoster(); renderChart(); }
+  else { $('sel-mode').value=mode; resetReal(); renderRealPanels(); renderRealTimeline(); }
+}
+$('sel-mode').onchange=e=>setMode(e.target.value);
+function fit(){
+  scale=Math.min(innerWidth/W,innerHeight/H);
+  stage.style.transform=`translate(${(innerWidth-W*scale)/2}px,${(innerHeight-H*scale)/2}px) scale(${scale})`;
+  K=scale*Math.min(devicePixelRatio||1,2); canvas.width=Math.round(HW*K); canvas.height=Math.round(HH*K); pack.resize(K); buildStatic();
+}
+addEventListener('resize',fit); fit();
+function tickClock(){ const d=new Date(); $('clock').firstChild.nodeValue=d.toTimeString().slice(0,8); $('date').textContent=d.toLocaleDateString('zh-CN',{year:'numeric',month:'2-digit',day:'2-digit',weekday:'short'}); }
+tickClock(); setInterval(tickClock,1000);
+
+let last=performance.now(),uiAcc=0;
+function frame(nowT){
+  const raw=Math.min(.1,(nowT-last)/1000); last=nowT;
+  if(playing){ const dt=raw*speed;
+    if(realState.mode==='demo'){
+      simTime+=dt; scheduler(dt); for(const b of bees) updateBee(b,dt); updateParts(dt);
+      for(const c of cells){ c.heat=Math.max(0,c.heat-dt*.8); c.flash=Math.max(0,c.flash-dt*1.6); }
+      if(Math.floor(simTime)>lastBucketSec){ lastBucketSec=Math.floor(simTime); buckets.shift(); buckets.push(bucketAcc); bucketAcc=0; renderChart(); }
+      uiAcc+=raw; if(uiAcc>.25){ uiAcc=0; renderKpis(); renderRoster(); renderFlows(); updateStyleStats(); }
+    } else {
+      if(realState.mode==='replay') realReplayStep(raw);
+      else { for(const b of bees) updateRealBee(b); }
+      uiAcc+=raw; if(uiAcc>.25){ uiAcc=0; if(realState.uiDirty){ renderRealPanels(); realState.uiDirty=false; } if(realState.timelineDirty){ renderRealTimeline(); realState.timelineDirty=false; } renderRoster(); updateStyleStats(); } moveTimelineHead();
+    }
+  }
+  if(visualStyle!=='hive'){
+    const list=bees.filter(b=>b.state!=='dock'&&b.src).map(b=>({key:b.role.id,roleId:b.role.id,src:b.src.id,state:b.state,frac:b.frac??0}));
+    pack.frame(playing?raw*speed:0,list,{mode:realState.mode,centerText:realState.mode==='demo'?'演示归集 '+total:'已完成运行 '+realState.done+'（真实）',reduced,runs:RUN_DATA?.runs?.runs||[]});
+  }
+  draw(raw); requestAnimationFrame(frame);
+}
+if(realState.mode==='demo'){ mountFlowSel(); renderChart(); renderKpis(); renderRoster(); renderFlows(); }
+else { resetReal(); renderRealPanels(); renderRealTimeline(); realState.uiDirty=false; realState.timelineDirty=false; }
+initDispatch();
+setInterval(()=>{
+  pollLiveData();
+},5000);
+requestAnimationFrame(frame);
+})();
+</script>
+</body>
+</html>

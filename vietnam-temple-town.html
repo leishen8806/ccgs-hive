@@ -1,0 +1,12 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>越南寺庙小镇 · 规划文档</title>
+<style>
+:root{color-scheme:dark}body{margin:0;background:#10181d;color:#e8eee9;font:15px/1.7 system-ui,sans-serif}.app{display:grid;grid-template-columns:260px 1fr;min-height:100vh}.nav{padding:24px 16px;border-right:1px solid #33434a;background:#142026}.brand{color:#f2c879;font-size:20px;font-weight:700;margin-bottom:20px}.tabs{display:grid;gap:8px}.tabs button{padding:10px;border:1px solid #33434a;border-radius:8px;background:transparent;color:inherit;text-align:left;cursor:pointer}.tabs button.active,.tabs button:hover{border-color:#f2c879;background:#24343a}.main{max-width:1100px;width:100%;padding:38px 5vw}.meta{color:#9eb0b2;margin-bottom:14px}.doc{white-space:pre-wrap;overflow-wrap:anywhere;background:#172128;border:1px solid #33434a;border-radius:12px;padding:28px;box-shadow:0 15px 60px #0005} @media(max-width:700px){.app{display:block}.nav{border-right:0;border-bottom:1px solid #33434a}.tabs{display:flex;overflow:auto}.tabs button{white-space:nowrap}.main{padding:20px 12px}.doc{padding:18px}}
+</style></head><body><div class="app"><aside class="nav"><div class="brand">越南寺庙小镇</div><nav class="tabs" id="tabs"></nav></aside><main class="main"><div class="meta" id="meta">在线文档阅读 · 本地服务</div><article class="doc" id="doc">正在加载……</article></main></div>
+<script>
+const docs=[['01-master-plan','总体规划'],['02-3d-visual-interaction','3D视觉与交互'],['03-culture-compliance-checklist','文化与合规'],['04-vietnamese-copy-drafts','越南语文案'],['05-acceptance-and-decisions','验收与拍板']];
+const tabs=document.querySelector('#tabs'),doc=document.querySelector('#doc'),meta=document.querySelector('#meta');
+async function openDoc(id,label,button){document.querySelectorAll('button').forEach(x=>x.classList.remove('active'));button.classList.add('active');doc.textContent='正在加载……';try{const r=await fetch('/api/design-docs/'+id);if(!r.ok)throw Error('HTTP '+r.status);doc.textContent=await r.text();meta.textContent=label+' · 在线文档阅读 · '+new Date().toLocaleString()}catch(e){doc.textContent='加载失败：'+e.message}}
+docs.forEach(([id,label],i)=>{const b=document.createElement('button');b.textContent=label;b.onclick=()=>openDoc(id,label,b);tabs.appendChild(b);if(i===0)b.click()});
+</script></body></html>
