@@ -20,7 +20,7 @@ CLAUDE_ADD_DIRS = [Path(r"E:\cloudtemple-worktrees\ccgs-integration"), Path(r"E:
 HOST = "0.0.0.0"
 PORT = 3300
 BUILD_OUT = ROOT / "ccgs49-data.js"
-STATIC_FILES = {"/bigscreen.html", "/views.html", "/ccgs49-data.js", "/source.html", "/styles-pack.js", "/styles-pack-demo.html", "/vietnam-temple-town.html", "/assets/drlife-logo.png", "/assets/drlife-logo-mark.png"}
+STATIC_FILES = {"/bigscreen.html", "/views.html", "/ccgs49-data.js", "/source.html", "/styles-pack.js", "/styles-pack-demo.html", "/vietnam-temple-town.html", "/ui-kit.html", "/ui-kit-data.js", "/ui-kit-tokens.js", "/assets/drlife-logo.png", "/assets/drlife-logo-mark.png"}
 DESIGN_DOCS = {
     "01-master-plan": CCGS / "design" / "vietnam-temple-town" / "01-master-plan.md",
     "02-3d-visual-interaction": CCGS / "design" / "vietnam-temple-town" / "02-3d-visual-interaction.md",

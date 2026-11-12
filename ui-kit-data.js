@@ -1,0 +1,14 @@
+window.UI_CONTROLS=[
+{id:'BTN-01',name:'Button',category:'基础',status:['Web 完成','H5 完成','App 完成'],source:'KhmerX · components/ui/button.tsx',checks:['主/次/危险','图标与加载','禁用原因','键盘焦点'],code:'<Button disabled={busy} onClick={submit}>继续</Button>'},
+{id:'INP-01',name:'Input',category:'基础',status:['Web 规范建议','H5 规范建议','App 规范建议'],source:'Dr.life+ · packages/ui/src/foundation.tsx',checks:['标签/占位/帮助','错误/清空','44px 点击区'],code:'<label>邮箱<input aria-describedby="help" /></label>'},
+{id:'SEL-01',name:'Select',category:'基础',status:['Web 规范建议','H5 规范建议','App 规范建议'],source:'RouteFit · ops/driver-demo/RouteFit管理后台demo.html',checks:['单选/多选','空结果/加载','键盘选择'],code:'<select aria-label="状态"><option>全部</option></select>'},
+{id:'SWT-01',name:'Switch',category:'基础',status:['Web 规范建议','H5 规范建议','App 规范建议'],source:'KhmerX · components/ui/toggle.tsx',checks:['开/关/禁用','不只靠颜色','读屏状态'],code:'<Switch checked={enabled} aria-label="启用通知" />'},
+{id:'TAG-01',name:'Tag',category:'基础',status:['Web 规范建议','H5 规范建议','App 规范建议'],source:'VirtualAiOffice · ui-kit.html',checks:['状态/可关闭','长文案溢出','键盘关闭'],code:'<span class="tag success">已同步</span>'},
+{id:'BDG-01',name:'Badge',category:'基础',status:['Web 规范建议','H5 规范建议','App 规范建议'],source:'Dr.life+ · packages/ui/src/loading.tsx',checks:['数字上限','点状态','读屏文本'],code:'<span aria-label="99 条未读" class="badge">99+</span>'},
+{id:'AVT-01',name:'Avatar',category:'基础',status:['Web 规范建议','H5 规范建议','App 规范建议'],source:'RouteFit · ops/driver-demo/RouteFit司机端demo.html',checks:['图片/缩写','失败回退','姓名隐私'],code:'<img alt="林工头像" src={avatarUrl} onError={fallback} />'},
+{id:'TST-01',name:'Toast',category:'反馈',status:['Web 完成','H5 完成','App 完成'],source:'KhmerX · components/ui/toast.tsx',checks:['顶部安全区','2 秒自动消失','不抢焦点'],code:'toast({ title: "已保存", duration: 2000 })',popup:'轻提示 Toast：顶部安全区；操作后触发；2 秒自动关闭；适合非阻塞结果，不适合需要决策。'},
+{id:'PCP-01',name:'Popconfirm',category:'反馈',status:['Web 规范建议','H5 规范建议','App 规范建议'],source:'Dr.life+ · packages/ui/src/startup-gate.tsx',checks:['按钮旁定位','确认/取消/Esc','不用于高风险'],code:'<Popconfirm title="撤销这项操作？" onConfirm={undo} />',popup:'气泡确认框：危险按钮旁；点击触发；确认/取消/Esc 关闭；适合可撤销的低复杂度操作，不适合金额与协议。'},
+{id:'DRW-01',name:'Drawer',category:'反馈',status:['Web 规范建议','H5 规范建议','App 规范建议'],source:'VirtualAiOffice · bigscreen.html',checks:['右侧滑出','×/Esc/遮罩','移动端底部弹出'],code:'<Drawer open={open} onClose={close}>详情</Drawer>',popup:'抽屉面板：右侧滑出；明确按钮触发；×/Esc/遮罩关闭；适合保留上下文的详情，不适合一句话提示。'},
+{id:'EMP-01',name:'Empty',category:'反馈',status:['Web 规范建议','H5 规范建议','App 规范建议'],source:'RouteFit · repo/prototype/records/2026-10-24-warehouse-platform/source/browser-ui-checks.js',checks:['说明原因','下一步动作','无权限与无数据区分'],code:'<Empty title="暂无任务" action={<Button>刷新</Button>} />'}
+];
+document.head.insertAdjacentHTML('beforeend','<style>@media(max-width:620px){body{overflow-x:hidden}.grid{grid-template-columns:1fr}}</style>');
