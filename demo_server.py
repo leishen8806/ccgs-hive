@@ -20,7 +20,7 @@ class DemoHandler(SimpleHTTPRequestHandler):
         if route == "/bigscreen.html":
             self.path = "/bigscreen.html"
             return super().do_GET()
-        if route in ("/styles-pack.js", "/assets/drlife-logo-mark.png", "/assets/drlife-logo.png"):
+        if route in ("/styles-pack.js", "/ui-kit-directory.html", "/ui-kit.html", "/assets/drlife-logo-mark.png", "/assets/drlife-logo.png", "/assets/ui-kit-BV2TlDxx.js", "/assets/ui-kit-HokK2JGS.css"):
             return super().do_GET()
         self.send_error(404)
 
@@ -35,7 +35,7 @@ class DemoHandler(SimpleHTTPRequestHandler):
         if route == "/bigscreen.html":
             self.path = "/bigscreen.html"
             return super().do_HEAD()
-        if route in ("/styles-pack.js", "/assets/drlife-logo-mark.png", "/assets/drlife-logo.png"):
+        if route in ("/styles-pack.js", "/ui-kit-directory.html", "/ui-kit.html", "/assets/drlife-logo-mark.png", "/assets/drlife-logo.png", "/assets/ui-kit-BV2TlDxx.js", "/assets/ui-kit-HokK2JGS.css"):
             return super().do_HEAD()
         self.send_error(404)
 
